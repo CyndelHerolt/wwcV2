@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameChoiceController!{% endblock %}
+
+{% block body %}
+    <h1>Hello GameChoiceController!</h1>
+
+    <p>Choisissez la partie que vous voulez lancer</p>
+
+    {% for game in games %}
+        <a href="{{ path('app_init_game', {'id':game.id}) }}">{{ game.nomPartie }}</a>
+    {% endfor %}
+{% endblock %}

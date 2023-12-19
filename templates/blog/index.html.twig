@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BlogController!{% endblock %}
+
+{% block body %}
+    <h1>BlogController</h1>
+
+    <turbo-frame id="post_form">
+        {{ form(form) }}
+    </turbo-frame>
+
+    <div id="posts" {{ turbo_stream_listen('post') }}>
+        <h2>Ici les posts</h2>
+    </div>
+{% endblock %}
