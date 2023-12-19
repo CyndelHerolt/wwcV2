@@ -2,6 +2,7 @@
 // src/Controller/ChatController.php
 namespace App\Controller;
 
+use App\Classes\DataUserSession;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class TestController extends AbstractController
 {
     #[Route('/test', name: 'app_test')]
-    public function test(Request $request, HubInterface $hub): Response
+    public function test(Request $request, HubInterface $hub, DataUserSession $dataUserSession): Response
     {
         $form = $this->createFormBuilder()
             ->add('destinataire', EntityType::class, [

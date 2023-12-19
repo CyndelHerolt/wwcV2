@@ -2,20 +2,44 @@
 
 namespace App\Controller\Admin;
 
+use App\Classes\DataUserSession;
 use App\Entity\Game;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
+use Doctrine\ORM\QueryBuilder;
+
 
 class GameCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private DataUserSession $dataUserSession
+    )
+    {
+        $this->dataUserSession = $dataUserSession;
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
+
+        $game = $this->dataUserSession->getGame();
+
+        // Ajoutez votre condition ici
+        $queryBuilder->andWhere('entity.id = :id')
+            ->setParameter('id', $game->getId());
+
+        return $queryBuilder;
+    }
+
     public static function getEntityFqcn(): string
     {
         return Game::class;

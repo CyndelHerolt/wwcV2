@@ -2,18 +2,23 @@
 
 namespace App\Controller;
 
+use App\Classes\DataUserSession;
 use App\Repository\GameRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class GameChoiceController extends AbstractController
 {
     public function __construct(
-        private GameRepository $gameRepository,
+        protected GameRepository $gameRepository,
+        private DataUserSession $dataUserSession,
+        private readonly RequestStack $session,
     )
     {
         $this->gameRepository = $gameRepository;
+        $this->dataUserSession = $dataUserSession;
     }
 
     #[Route('/game/choice', name: 'app_game_choice')]
@@ -41,14 +46,16 @@ class GameChoiceController extends AbstractController
     #[Route('/game/choice/{id}', name: 'app_init_game')]
     public function initGame(int $id)
     {
-        // n'autoriser que si connecté
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             return $this->redirectToRoute('app_login');
         }
 
         $game = $this->gameRepository->find($id);
-        dd($game);
 
-        return $this->redirectToRoute('app_game_choice');
+        // ajouter le jeu à la session
+        $sess = $this->session->getSession()->set('game', $game);
+//        dd($this->dataUserSession->getGame());
+
+        return $this->redirectToRoute('admin');
     }
 }
