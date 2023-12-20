@@ -53,8 +53,7 @@ class GameChoiceController extends AbstractController
         $game = $this->gameRepository->find($id);
 
         // ajouter le jeu à la session
-        $sess = $this->session->getSession()->set('game', $game);
-//        dd($this->dataUserSession->getGame());
+        $this->session->getSession()->set('game', $game);
 
         return $this->redirectToRoute('admin');
     }

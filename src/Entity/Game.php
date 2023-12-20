@@ -110,6 +110,11 @@ class Game
         return $this->id;
     }
 
+    public function __toString(): string
+    {
+        return $this->getNomPartie();
+    }
+
     public function getPeriode(): ?int
     {
         return $this->periode;

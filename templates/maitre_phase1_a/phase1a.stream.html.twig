@@ -1,0 +1,13 @@
+<turbo-stream action="replace" target="phase">
+<template>
+        <div>
+            {% for offre in offres %}
+                <ul>
+                    <li>{{ offre.libelle }}</li>
+                    <li>{{ offre.prixMin }}</li>
+                    <li>{{ offre.prixMax }}</li>
+                </ul>
+            {% endfor %}
+        </div>
+    </template>
+</turbo-stream>

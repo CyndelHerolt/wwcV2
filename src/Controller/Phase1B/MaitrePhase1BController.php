@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Controller\Phase1A;
+namespace App\Controller\Phase1B;
 
 use App\Entity\Game;
-use App\Entity\Offre;
-use Doctrine\Common\Collections\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MaitrePhase1AController extends AbstractController
+class MaitrePhase1BController extends AbstractController
 {
     public function __construct(
         private HubInterface $hub,
@@ -19,16 +17,13 @@ class MaitrePhase1AController extends AbstractController
     {
     }
 
-    #[Route('/maitre/phase1/a', name: 'app_maitre_phase1_a')]
-    public function index(
-        ?Game       $game,
-        ?array $offres,
-    ): void
+    #[Route('/maitre/phase1/b', name: 'app_maitre_phase1_b')]
+    public function index(?Game $game): void
     {
         $this->hub->publish(new Update(
             'game/' . $game->getId(),
-            $this->renderView('maitre_phase1_a/phase1a.stream.html.twig', [
-                'offres' => $offres,
+            $this->renderView('maitre_phase1_b/phase1b.stream.html.twig', [
+                'hello' => 'world',
             ]),
             false
         ));
