@@ -24,7 +24,6 @@ class GameCrudController extends AbstractCrudController
         private DataUserSession $dataUserSession
     )
     {
-        $this->dataUserSession = $dataUserSession;
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder

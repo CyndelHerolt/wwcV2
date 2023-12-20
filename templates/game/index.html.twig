@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GameController!{% endblock %}
+
+{% block body %}
+
+        <h1>Game {{ game.id }}</h1>
+        <h1> Periode :
+            {% if game.periode == 1 %}
+                Janvier
+            {% elseif game.periode == 2 %}
+                Février
+            {% elseif game.periode == 3 %}
+                Mars
+            {% endif %}
+        </h1>
+        <p>Phase : {{ game.phase }}</p>
+
+                <a href="{{ path('app_game_switchphase', {'id':game.id}) }}">Switch</a>
+
+        <div id="infos" {{ turbo_stream_listen('game/'~game.id) }}>
+                <h2>Offres</h2>
+
+                {% for offre in offres %}
+                        <ul>
+                                <li>{{ offre.libelle }}</li>
+                                <li>{{ offre.prixMin }}</li>
+                                <li>{{ offre.prixMax }}</li>
+                        </ul>
+                {% endfor %}
+        </div>
+{% endblock %}
