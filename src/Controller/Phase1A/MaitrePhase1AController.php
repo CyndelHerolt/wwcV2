@@ -19,24 +19,19 @@ class MaitrePhase1AController extends AbstractController
     {
     }
 
-//    #[Route('/maitre/phase1/a', name: 'app_maitre_phase1_a')]
+    #[Route('/maitre/phase1/a', name: 'app_maitre_phase1_a')]
     public function index(
         ?Game       $game,
         ?array $offres,
-    ): Response
+    ): void
     {
         $this->hub->publish(new Update(
             'game/' . $game->getId(),
             $this->renderView('maitre_phase1_a/phase1a.stream.html.twig', [
                 'offres' => $offres,
-                'game' => $game,
             ]),
             false
         ));
 
-        return $this->render('maitre_phase1_a/phase1a.stream.html.twig', [
-            'game' => $game,
-            'offres' => $offres,
-        ]);
     }
 }

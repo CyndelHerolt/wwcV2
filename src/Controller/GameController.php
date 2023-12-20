@@ -24,6 +24,8 @@ class GameController extends AbstractController
         private MaitrePhase1BController $maitrePhase1BController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
+        private HubInterface            $hub,
+
     )
     {
     }
@@ -34,16 +36,14 @@ class GameController extends AbstractController
         $gameId = $this->dataUserSession->getGame()->getId();
         $game = $this->gameRepository->find($gameId);
 
-        dump($game->getPhase());
-
         if ($game === null) {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
-            return $this->redirectToRoute('admin');
+//            return $this->redirectToRoute('admin');
         }
-
 
         if ($game->getPhase() === "1a") {
             $offres = $this->offreRepository->findBy(['game' => $game]);
+            $this->maitrePhase1AController->index($game, $offres);
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game]);
             $this->maitrePhase1BController->index($game);
@@ -66,11 +66,8 @@ class GameController extends AbstractController
         }
 
         if ($game->getPhase() === "1a") {
-//            dd("1");
             $game->setPhase("1b");
-        } else {
-//            dd("2");
-
+        } elseif ($game->getPhase() === "1b") {
             $game->setPhase("1a");
         }
         $this->gameRepository->save($game, true);
