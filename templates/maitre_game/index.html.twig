@@ -25,7 +25,7 @@
         </turbo-frame>
 
 
-        <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
+        <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
             {% if game.phase == '1a' %}
                 {{ include('maitre_phase1_a/phase1a.stream.html.twig') }}
             {% elseif game.phase == '1b' %}
