@@ -5,16 +5,16 @@
 {% block body %}
     <section>
         <h1>Game {{ game.id }}</h1>
-            <h1> Periode :
-                {% if game.periode == 1 %}
-                    Janvier
-                {% elseif game.periode == 2 %}
-                    Février
-                {% elseif game.periode == 3 %}
-                    Mars
-                {% endif %}
-            </h1>
-            <h2>Phase : {{ game.phase }}</h2>
+        <h1> Periode :
+            {% if game.periode == 1 %}
+                Janvier
+            {% elseif game.periode == 2 %}
+                Février
+            {% elseif game.periode == 3 %}
+                Mars
+            {% endif %}
+        </h1>
+        <h2>Phase : {{ game.phase }}</h2>
 
         <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
             {% if game.phase == '1a' %}

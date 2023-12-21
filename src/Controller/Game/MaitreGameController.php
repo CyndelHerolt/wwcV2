@@ -66,7 +66,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
-            $this->maitrePhase1BController->joueur_phase($game);
+            $this->joueurGameController->joueur_phase1B($game);
         } elseif ($game->getPhase() === "1b") {
             $game->setPhase("1c");
         }
@@ -87,7 +87,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
-            $this->joueurGameController->joueur_phase($game);
+            $this->joueurGameController->joueur_phase1A($game);
         } elseif ($game->getPhase() === "1c") {
             $game->setPhase("1b");
         }
