@@ -14,7 +14,7 @@ class DefaultController extends AbstractController
         if ($this->isGranted('ROLE_MAITRE')) {
             return $this->redirectToRoute('admin');
         } elseif($this->isGranted('ROLE_JOUEUR')) {
-            return $this->redirectToRoute('app_dashboard_joueur');
+            return $this->redirectToRoute('app_joueur_game');
         }
 
         return $this->redirectToRoute('app_login');

@@ -26,7 +26,7 @@ class MaitrePhase1AController extends AbstractController
     ): void
     {
         $this->hub->publish(new Update(
-            'game/' . $game->getId(),
+            'game-maitre/' . $this->getUser()->getId(),
             $this->renderView('maitre_phase1_a/phase1a.stream.html.twig', [
                 'offres' => $offres,
                 'game' => $game,
