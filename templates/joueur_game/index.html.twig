@@ -3,18 +3,26 @@
 {% block title %}Hello JoueurGameController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section>
+        <h1>Game {{ game.id }}</h1>
+            <h1> Periode :
+                {% if game.periode == 1 %}
+                    Janvier
+                {% elseif game.periode == 2 %}
+                    Février
+                {% elseif game.periode == 3 %}
+                    Mars
+                {% endif %}
+            </h1>
+            <h2>Phase : {{ game.phase }}</h2>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/cyndel/Web/wwc/src/Controller/JoueurGameController.php'|file_link(0) }}">src/Controller/JoueurGameController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/cyndel/Web/wwc/templates/joueur_game/joueur_phase1a.stream.html.twig'|file_link(0) }}">templates/joueur_game/index.html.twig</a></code></li>
-    </ul>
-</div>
+        <div id="phase-joueur-{{ equipe.id }}" {{ turbo_stream_listen('game-joueur/'~equipe.id) }}>
+            {% if game.phase == '1a' %}
+                {{ include('phase1_a/joueur_phase1a.stream.html.twig') }}
+            {% elseif game.phase == '1b' %}
+                {{ include('phase1_b/maitre_phase1b.stream.html.twig') }}
+            {% endif %}
+        </div>
+    </section>
 {% endblock %}
