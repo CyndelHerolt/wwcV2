@@ -1,6 +1,7 @@
-<turbo-stream action="replace" target="phase-joueur-{{ equipe.id }}">
+<turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
     <template>
-        <div id="phase" {{ turbo_stream_listen('game-joueur/'~equipe.id) }}>
+        <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
+            {% if equipe != null %}
             <ul>
                 <li><span>C.A</span> {{ equipe.cumulCa }}</li>
                 <li><span>Résultat</span> {{ equipe.passifResultat }}</li>
@@ -104,5 +105,8 @@
                 </table>
             </div>
         </div>
+        {% else %}
+        <h3>TEST</h3>
+        {% endif %}
     </template>
 </turbo-stream>

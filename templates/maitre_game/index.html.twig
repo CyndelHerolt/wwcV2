@@ -9,12 +9,10 @@
         <turbo-frame id="pause">
             <a href="{{ path('app_maitre_game_pause', {'id':game.id}) }}">
                 <button class="btn
-                                        {% if game.pause == true %}
-                                    btn-success">
-                    Reprendre
+                    {% if game.pause == true %}
+                    btn-success">Reprendre
                     {% else %}
-                        btn-danger">
-                        Pause
+                        btn-danger">Pause
                     {% endif %}
                 </button>
             </a>

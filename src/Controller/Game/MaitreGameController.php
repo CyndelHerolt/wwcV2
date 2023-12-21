@@ -21,6 +21,7 @@ class MaitreGameController extends AbstractController
         private DataUserSession         $dataUserSession,
         private MaitrePhase1AController $maitrePhase1AController,
         private MaitrePhase1BController $maitrePhase1BController,
+        private JoueurGameController    $joueurGameController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private HubInterface            $hub,
@@ -41,7 +42,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1a") {
             $offres = $this->offreRepository->findBy(['game' => $game]);
-            $this->maitrePhase1AController->index($game, $offres);
+            $this->maitrePhase1AController->maitre_phase($game, $offres);
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game]);
             $this->maitrePhase1BController->index($game);
@@ -65,6 +66,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
+            $this->maitrePhase1BController->joueur_phase($game);
         } elseif ($game->getPhase() === "1b") {
             $game->setPhase("1c");
         }
@@ -85,6 +87,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
+            $this->joueurGameController->joueur_phase($game);
         } elseif ($game->getPhase() === "1c") {
             $game->setPhase("1b");
         }

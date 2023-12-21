@@ -16,12 +16,11 @@
             </h1>
             <h2>Phase : {{ game.phase }}</h2>
 
-
-        <div id="phase-joueur-{{ equipe.id }}" {{ turbo_stream_listen('game-joueur/'~equipe.id) }}>
+        <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
             {% if game.phase == '1a' %}
                 {{ include('phase1_a/joueur_phase1a.stream.html.twig') }}
             {% elseif game.phase == '1b' %}
-                {{ include('phase1_b/maitre_phase1b.stream.html.twig') }}
+                {{ include('phase1_b/joueur_phase1b.stream.html.twig') }}
             {% endif %}
         </div>
     </section>

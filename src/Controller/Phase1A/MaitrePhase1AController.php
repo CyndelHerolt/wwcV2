@@ -20,7 +20,7 @@ class MaitrePhase1AController extends AbstractController
     }
 
 //    #[Route('/maitre/phase1/a', name: 'app_maitre_phase1_a')]
-    public function index(
+    public function maitre_phase(
         ?Game       $game,
         ?array $offres,
     ): void
