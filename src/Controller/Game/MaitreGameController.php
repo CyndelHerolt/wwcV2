@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Game;
 
 use App\Classes\DataUserSession;
 use App\Controller\Phase1A\MaitrePhase1AController;
@@ -10,13 +10,12 @@ use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/maitre')]
 #[IsGranted('ROLE_MAITRE')]
-class GameController extends AbstractController
+class MaitreGameController extends AbstractController
 {
     public function __construct(
         private DataUserSession         $dataUserSession,
@@ -29,7 +28,7 @@ class GameController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'app_game')]
+    #[Route('/', name: 'app_maitre_game')]
     public function index(): Response
     {
         $gameId = $this->dataUserSession->getGame()->getId();
@@ -48,13 +47,13 @@ class GameController extends AbstractController
             $this->maitrePhase1BController->index($game);
         }
 
-        return $this->render('game/index.html.twig', [
+        return $this->render('maitre_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
         ]);
     }
 
-    #[Route('/game/next/{id}', name: 'app_game_next_phase')]
+    #[Route('/maitre_game/next/{id}', name: 'app_maitre_game_next_phase')]
     public function nextPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
@@ -71,10 +70,10 @@ class GameController extends AbstractController
         }
         $this->gameRepository->save($game, true);
 
-        return $this->redirectToRoute('app_game');
+        return $this->redirectToRoute('app_maitre_game');
     }
 
-    #[Route('/game/previous/{id}', name: 'app_game_previous_phase')]
+    #[Route('/maitre_game/previous/{id}', name: 'app_maitre_game_previous_phase')]
     public function previousPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
@@ -91,6 +90,6 @@ class GameController extends AbstractController
         }
         $this->gameRepository->save($game, true);
 
-        return $this->redirectToRoute('app_game');
+        return $this->redirectToRoute('app_maitre_game');
     }
 }
