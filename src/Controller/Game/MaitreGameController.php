@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Game;
 
 use App\Classes\DataUserSession;
 use App\Controller\Phase1A\MaitrePhase1AController;
@@ -10,13 +10,12 @@ use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/maitre')]
 #[IsGranted('ROLE_MAITRE')]
-class GameController extends AbstractController
+class MaitreGameController extends AbstractController
 {
     public function __construct(
         private DataUserSession         $dataUserSession,
@@ -29,7 +28,7 @@ class GameController extends AbstractController
     {
     }
 
-    #[Route('/', name: 'app_game')]
+    #[Route('/', name: 'app_maitre_game')]
     public function index(): Response
     {
         $gameId = $this->dataUserSession->getGame()->getId();
@@ -37,7 +36,7 @@ class GameController extends AbstractController
 
         if ($game === null) {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
-//            return $this->redirectToRoute('admin');
+            return $this->redirectToRoute('app_game_choice');
         }
 
         if ($game->getPhase() === "1a") {
@@ -48,14 +47,14 @@ class GameController extends AbstractController
             $this->maitrePhase1BController->index($game);
         }
 
-        return $this->render('game/index.html.twig', [
+        return $this->render('maitre_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
         ]);
     }
 
-    #[Route('/game/switch/{id}', name: 'app_game_switchphase')]
-    public function switchPhase(?int $id)
+    #[Route('/maitre_game/next/{id}', name: 'app_maitre_game_next_phase')]
+    public function nextPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
 
@@ -67,10 +66,30 @@ class GameController extends AbstractController
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
         } elseif ($game->getPhase() === "1b") {
-            $game->setPhase("1a");
+            $game->setPhase("1c");
         }
         $this->gameRepository->save($game, true);
 
-        return $this->redirectToRoute('app_game');
+        return $this->redirectToRoute('app_maitre_game');
+    }
+
+    #[Route('/maitre_game/previous/{id}', name: 'app_maitre_game_previous_phase')]
+    public function previousPhase(?int $id)
+    {
+        $game = $this->gameRepository->find($id);
+
+        if ($game === null) {
+            $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
+            return $this->redirectToRoute('admin');
+        }
+
+        if ($game->getPhase() === "1b") {
+            $game->setPhase("1a");
+        } elseif ($game->getPhase() === "1c") {
+            $game->setPhase("1b");
+        }
+        $this->gameRepository->save($game, true);
+
+        return $this->redirectToRoute('app_maitre_game');
     }
 }

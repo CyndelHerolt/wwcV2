@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Game;
 
 use App\Classes\DataUserSession;
 use App\Repository\GameRepository;
@@ -21,7 +21,7 @@ class GameChoiceController extends AbstractController
         $this->dataUserSession = $dataUserSession;
     }
 
-    #[Route('/game/choice', name: 'app_game_choice')]
+    #[Route('/maitre_game/choice', name: 'app_game_choice')]
     public function index(): Response
     {
         // n'autoriser que si connecté
@@ -43,7 +43,7 @@ class GameChoiceController extends AbstractController
         }
     }
 
-    #[Route('/game/choice/{id}', name: 'app_init_game')]
+    #[Route('/maitre_game/choice/{id}', name: 'app_init_game')]
     public function initGame(int $id)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -53,7 +53,7 @@ class GameChoiceController extends AbstractController
         $game = $this->gameRepository->find($id);
 
         // ajouter le jeu à la session
-        $this->session->getSession()->set('game', $game);
+        $this->session->getSession()->set('maitre_game', $game);
 
         return $this->redirectToRoute('admin');
     }

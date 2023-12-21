@@ -1,4 +1,12 @@
+@import "maitre";
+@import "bootstrap";
+
 body {
-    background-color: #e1e1e1 !important;
+    background-color: #efefef !important;
     color: #414141;
+
+    section {
+        padding: 20px;
+        margin: 20px;
+    }
 }
