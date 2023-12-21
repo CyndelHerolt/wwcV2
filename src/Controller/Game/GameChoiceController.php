@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_MAITRE')]
 class GameChoiceController extends AbstractController
 {
     public function __construct(
@@ -21,7 +23,7 @@ class GameChoiceController extends AbstractController
         $this->dataUserSession = $dataUserSession;
     }
 
-    #[Route('/maitre_game/choice', name: 'app_game_choice')]
+    #[Route('/game/choice', name: 'app_game_choice')]
     public function index(): Response
     {
         // n'autoriser que si connecté
@@ -43,7 +45,7 @@ class GameChoiceController extends AbstractController
         }
     }
 
-    #[Route('/maitre_game/choice/{id}', name: 'app_init_game')]
+    #[Route('/game/choice/{id}', name: 'app_init_game')]
     public function initGame(int $id)
     {
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -53,7 +55,7 @@ class GameChoiceController extends AbstractController
         $game = $this->gameRepository->find($id);
 
         // ajouter le jeu à la session
-        $this->session->getSession()->set('maitre_game', $game);
+        $this->session->getSession()->set('game', $game);
 
         return $this->redirectToRoute('admin');
     }
