@@ -1,0 +1,108 @@
+<turbo-stream action="replace" target="phase-joueur-{{ equipe.id }}">
+    <template>
+        <div id="phase" {{ turbo_stream_listen('game-joueur/'~equipe.id) }}>
+            <ul>
+                <li><span>C.A</span> {{ equipe.cumulCa }}</li>
+                <li><span>Résultat</span> {{ equipe.passifResultat }}</li>
+                <li><span>Trésorerie</span> {{ equipe.tresorerieSoldeFinal }}</li>
+            </ul>
+
+            <div class="bilan_comptable">
+                <table class="table table-bordered no-margin">
+                    <thead>
+                    <tr>
+                        <th colspan="2">Actif</th>
+                        <th colspan="2">Passif</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            Matériel
+                        </td>
+                        <td>
+                            {{ equipe.materielActif }} €
+                        </td>
+                        <td>
+                            Capital social
+                        </td>
+                        <td>
+                            {{ equipe.passifCapital }} €
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Créances
+                        </td>
+                        <td>
+                            {{ equipe.actifCreance }} €
+                        </td>
+                        <td>
+                            Résultat
+                        </td>
+                        <td>
+                            {{ equipe.passifResultat }} €
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Disponibilités
+                        </td>
+                        <td>
+                            {{ equipe.actifDispo }} €
+                        </td>
+                        <td>
+                            Dettes financières
+                        </td>
+                        <td>
+                            {{ equipe.passifDetteFinanciere }} €
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                            Dettes fournisseurs
+                        </td>
+                        <td>
+                            {{ equipe.passifDetteFournisseurs }} €
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                            Dettes fiscales et sociales
+                        </td>
+                        <td>
+                            {{ equipe.passifDetteFiscales }} €
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+
+                        </td>
+                        <td>
+                            Découvert bancaire
+                        </td>
+                        <td>
+                            {{ equipe.passifDecouvert }} €
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+</turbo-stream>
