@@ -25,7 +25,6 @@ class GameController extends AbstractController
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private HubInterface            $hub,
-
     )
     {
     }

@@ -1,6 +1,6 @@
 <turbo-stream action="replace" target="phase">
 <template>
-        <div>
+    <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
             {% for offre in offres %}
                 <ul>
                     <li>{{ offre.libelle }}</li>
