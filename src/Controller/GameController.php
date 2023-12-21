@@ -37,7 +37,7 @@ class GameController extends AbstractController
 
         if ($game === null) {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
-//            return $this->redirectToRoute('admin');
+            return $this->redirectToRoute('app_game_choice');
         }
 
         if ($game->getPhase() === "1a") {
@@ -54,8 +54,8 @@ class GameController extends AbstractController
         ]);
     }
 
-    #[Route('/game/switch/{id}', name: 'app_game_switchphase')]
-    public function switchPhase(?int $id)
+    #[Route('/game/next/{id}', name: 'app_game_next_phase')]
+    public function nextPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
 
@@ -67,7 +67,27 @@ class GameController extends AbstractController
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
         } elseif ($game->getPhase() === "1b") {
+            $game->setPhase("1c");
+        }
+        $this->gameRepository->save($game, true);
+
+        return $this->redirectToRoute('app_game');
+    }
+
+    #[Route('/game/previous/{id}', name: 'app_game_previous_phase')]
+    public function previousPhase(?int $id)
+    {
+        $game = $this->gameRepository->find($id);
+
+        if ($game === null) {
+            $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
+            return $this->redirectToRoute('admin');
+        }
+
+        if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
+        } elseif ($game->getPhase() === "1c") {
+            $game->setPhase("1b");
         }
         $this->gameRepository->save($game, true);
 

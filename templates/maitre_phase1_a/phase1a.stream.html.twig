@@ -1,13 +1,38 @@
 <turbo-stream action="replace" target="phase">
-<template>
-    <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
-            {% for offre in offres %}
-                <ul>
-                    <li>{{ offre.libelle }}</li>
-                    <li>{{ offre.prixMin }}</li>
-                    <li>{{ offre.prixMax }}</li>
-                </ul>
-            {% endfor %}
+    <template>
+        <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
+            <div class="offres1a">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Offre</th>
+                        <th>Type</th>
+                        <th>Budget</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for offre in offres %}
+                        <tr>
+                            <td>{{ offre.libelle }}</td>
+                            <td>{{ offre.typeOffre.libelle }}</td>
+                            <td>{{ offre.prixMin }} € - {{ offre.prixMax }} €</td>
+                            <td>
+                                <a href="">
+                                    <button>
+                                        {% if offre.visible == true %}
+                                            Masquer
+                                        {% else %}
+                                            Rendre visible
+                                        {% endif %}
+                                    </button>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </template>
 </turbo-stream>

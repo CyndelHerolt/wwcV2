@@ -3,24 +3,30 @@
 {% block title %}Hello GameController!{% endblock %}
 
 {% block body %}
+    <section>
+        <h1>Game {{ game.id }}</h1>
+        <turbo-frame id="phase_link">
+            <h1> Periode :
+                {% if game.periode == 1 %}
+                    Janvier
+                {% elseif game.periode == 2 %}
+                    Février
+                {% elseif game.periode == 3 %}
+                    Mars
+                {% endif %}
+            </h1>
+            <p>Phase : {{ game.phase }}</p>
 
-    <h1>Game {{ game.id }}</h1>
-    <turbo-frame id="phase_link">
-    <h1> Periode :
-        {% if game.periode == 1 %}
-            Janvier
-        {% elseif game.periode == 2 %}
-            Février
-        {% elseif game.periode == 3 %}
-            Mars
-        {% endif %}
-    </h1>
-    <p>Phase : {{ game.phase }}</p>
+            {% if game.phase != '1a' %}
+            <a href="{{ path('app_game_previous_phase', {'id':game.id}) }}">Précédent</a>
+            {% endif %}
 
-        <a href="{{ path('app_game_switchphase', {'id':game.id}) }}">Switch</a>
-    </turbo-frame>
+            <a href="{{ path('app_game_next_phase', {'id':game.id}) }}">Suivant</a>
+        </turbo-frame>
 
-    <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
-    <h2>Ici le contenu</h2>
-    </div>
+
+        <div id="phase" {{ turbo_stream_listen('game/'~game.id) }}>
+            <h2>Ici le contenu</h2>
+        </div>
+    </section>
 {% endblock %}
