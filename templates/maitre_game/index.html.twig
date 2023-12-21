@@ -5,31 +5,54 @@
 {% block body %}
     <section>
         <h1>Game {{ game.id }}</h1>
-        <turbo-frame id="phase_link">
-            <h1> Periode :
-                {% if game.periode == 1 %}
-                    Janvier
-                {% elseif game.periode == 2 %}
-                    Février
-                {% elseif game.periode == 3 %}
-                    Mars
-                {% endif %}
-            </h1>
-            <p>Phase : {{ game.phase }}</p>
 
-            {% if game.phase != '1a' %}
-                <a href="{{ path('app_maitre_game_previous_phase', {'id':game.id}) }}"><button class="btn btn-primary">Précédent</button></a>
-            {% endif %}
-
-            <a href="{{ path('app_maitre_game_next_phase', {'id':game.id}) }}"><button class="btn btn-primary">Suivant</button></a>
+        <turbo-frame id="pause">
+            <a href="{{ path('app_maitre_game_pause', {'id':game.id}) }}">
+                <button class="btn
+                                        {% if game.pause == true %}
+                                    btn-success">
+                    Reprendre
+                    {% else %}
+                        btn-danger">
+                        Pause
+                    {% endif %}
+                </button>
+            </a>
         </turbo-frame>
+
+        <h1> Periode :
+            {% if game.periode == 1 %}
+                Janvier
+            {% elseif game.periode == 2 %}
+                Février
+            {% elseif game.periode == 3 %}
+                Mars
+            {% endif %}
+        </h1>
+        <h2>Phase {{ game.phase }}
+            {% if game.phase == "1a" %}
+                : Création de l'appel d'offre
+            {% elseif game.phase == "1b" %}
+                : Retour des offres
+            {% endif %}
+        </h2>
+
+        {% if game.phase != '1a' %}
+            <a href="{{ path('app_maitre_game_previous_phase', {'id':game.id}) }}">
+                <button class="btn btn-primary">Précédent</button>
+            </a>
+        {% endif %}
+
+        <a href="{{ path('app_maitre_game_next_phase', {'id':game.id}) }}">
+            <button class="btn btn-primary">Suivant</button>
+        </a>
 
 
         <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
             {% if game.phase == '1a' %}
-                {{ include('maitre_phase1_a/phase1a.stream.html.twig') }}
+                {{ include('phase1_a/maitre_phase1a.stream.html.twig') }}
             {% elseif game.phase == '1b' %}
-                {{ include('maitre_phase1_b/phase1b.stream.html.twig') }}
+                {{ include('phase1_b/maitre_phase1b.stream.html.twig') }}
             {% endif %}
         </div>
     </section>

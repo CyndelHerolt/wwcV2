@@ -53,7 +53,7 @@ class MaitreGameController extends AbstractController
         ]);
     }
 
-    #[Route('/maitre_game/next/{id}', name: 'app_maitre_game_next_phase')]
+    #[Route('/next/{id}', name: 'app_maitre_game_next_phase')]
     public function nextPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
@@ -73,7 +73,7 @@ class MaitreGameController extends AbstractController
         return $this->redirectToRoute('app_maitre_game');
     }
 
-    #[Route('/maitre_game/previous/{id}', name: 'app_maitre_game_previous_phase')]
+    #[Route('/previous/{id}', name: 'app_maitre_game_previous_phase')]
     public function previousPhase(?int $id)
     {
         $game = $this->gameRepository->find($id);
@@ -89,6 +89,16 @@ class MaitreGameController extends AbstractController
             $game->setPhase("1b");
         }
         $this->gameRepository->save($game, true);
+
+        return $this->redirectToRoute('app_maitre_game');
+    }
+
+    //todo: publier une update mercure pour passer le jeu en pause côté joueurs
+    #[Route('/pause/{id}', name: 'app_maitre_game_pause')]
+    public function pause(?int $id) {
+        $game = $this->gameRepository->find($id);
+        $game->setPause(!$game->isPause());
+        $this->gameRepository->save($game);
 
         return $this->redirectToRoute('app_maitre_game');
     }

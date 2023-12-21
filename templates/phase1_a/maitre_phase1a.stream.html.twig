@@ -18,15 +18,19 @@
                             <td>{{ offre.typeOffre.libelle }}</td>
                             <td>{{ offre.prixMin }} € - {{ offre.prixMax }} €</td>
                             <td>
-                                <a href="">
-                                    <button class="btn btn-primary">
+                                <turbo-frame id="visibilite">
+                                <a href="{{ path('app_offre_visibilite', {'id':offre.id}) }}">
+                                    <button class="btn
                                         {% if offre.visible == true %}
-                                            Masquer
+                                    btn-success">
+                                        Masquer
                                         {% else %}
+                                            btn-danger">
                                             Rendre visible
                                         {% endif %}
                                     </button>
                                 </a>
+                                </turbo-frame>
                             </td>
                         </tr>
                     {% endfor %}
