@@ -1,4 +1,33 @@
+@import "maitre";
+@import "joueur";
+@import "bootstrap";
+@import "@fortawesome/fontawesome-pro/css/all.min.css";
+
 body {
-    background-color: #e1e1e1 !important;
-    color: #414141;
+  background-color: #f8f8f8 !important;
+  color: #414141;
+
+  section {
+    padding: 50px 75px !important;
+  }
+
+  .menu {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 50px;
+    color: white;
+
+    ul {
+      display: flex;
+      list-style: none;
+      background-color: white;
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin: 3px;
+        padding: 5px 10px;
+      }
+    }
+  }
 }

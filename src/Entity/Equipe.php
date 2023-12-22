@@ -146,10 +146,14 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: User::class)]
     private Collection $users;
 
+    #[ORM\ManyToMany(targetEntity: Offre::class, inversedBy: 'equipes')]
+    private Collection $offres;
+
     public function __construct()
     {
         $this->personnels = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -705,6 +709,30 @@ class Equipe
                 $user->setEquipe(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        $this->offres->removeElement($offre);
 
         return $this;
     }

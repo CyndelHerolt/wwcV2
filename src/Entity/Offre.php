@@ -50,6 +50,9 @@ class Offre
     #[ORM\ManyToOne(targetEntity: TypeOffre::class, inversedBy: 'offres')]
     private ?TypeOffre $type_offre = null;
 
+    #[ORM\ManyToMany(targetEntity: Equipe::class, mappedBy: 'offres')]
+    private Collection $equipes;
+
     public function getTypeOffre(): ?TypeOffre
     {
         return $this->type_offre;
@@ -65,6 +68,7 @@ class Offre
     public function __construct()
     {
         $this->besoin_role = new ArrayCollection();
+        $this->equipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -193,6 +197,33 @@ class Offre
             if ($besoinRole->getOffre() === $this) {
                 $besoinRole->setOffre(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipe>
+     */
+    public function getEquipes(): Collection
+    {
+        return $this->equipes;
+    }
+
+    public function addEquipe(Equipe $equipe): static
+    {
+        if (!$this->equipes->contains($equipe)) {
+            $this->equipes->add($equipe);
+            $equipe->addOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipe(Equipe $equipe): static
+    {
+        if ($this->equipes->removeElement($equipe)) {
+            $equipe->removeOffre($this);
         }
 
         return $this;

@@ -55,7 +55,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         if ($this->authorizationChecker->isGranted('ROLE_MAITRE')) {
             return new RedirectResponse($this->urlGenerator->generate('app_game_choice'));
         } elseif($this->authorizationChecker->isGranted('ROLE_JOUEUR')) {
-            return new RedirectResponse($this->urlGenerator->generate('app_dashboard_joueur'));
+            return new RedirectResponse($this->urlGenerator->generate('app_joueur_game'));
         }
 
         return new RedirectResponse($this->urlGenerator->generate('app_test'));

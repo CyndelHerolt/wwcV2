@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class DataUserSession
 {
-    private SessionInterface $session;
     protected ?Game $game = null;
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Game;
 
 use App\Classes\DataUserSession;
 use App\Repository\GameRepository;
@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_MAITRE')]
 class GameChoiceController extends AbstractController
 {
     public function __construct(
@@ -53,8 +55,7 @@ class GameChoiceController extends AbstractController
         $game = $this->gameRepository->find($id);
 
         // ajouter le jeu à la session
-        $sess = $this->session->getSession()->set('game', $game);
-//        dd($this->dataUserSession->getGame());
+        $this->session->getSession()->set('game', $game);
 
         return $this->redirectToRoute('admin');
     }

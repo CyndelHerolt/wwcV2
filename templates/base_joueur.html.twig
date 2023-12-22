@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {#        {% block importmap %}{{ importmap('app') }}{% endblock %}#}
+    {% endblock %}
+</head>
+<body>
+{% block header %}
+    {{ include('_partials/_menu_joueur.html.twig') }}
+{% endblock %}
+{% block body %}
+{% endblock %}
+    <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
+        {% if game.pause == true %}
+        <i class="fa-duotone fa-circle-pause fa-2x" style="color: orange"></i>
+        {% else %}
+        <i class="fa-duotone fa-circle-play fa-2x" style="color: green"></i>
+        {% endif %}
+        <span>13:12</span>
+    </div>
+</body>
+</html>

@@ -21,6 +21,12 @@ class OffreRepository extends ServiceEntityRepository
         parent::__construct($registry, Offre::class);
     }
 
+    public function save(Offre $offre): void
+    {
+        $this->_em->persist($offre);
+        $this->_em->flush();
+    }
+
 //    /**
 //     * @return Offre[] Returns an array of Offre objects
 //     */

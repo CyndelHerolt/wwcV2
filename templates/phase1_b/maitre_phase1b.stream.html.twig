@@ -1,0 +1,7 @@
+<turbo-stream action="replace" target="phase">
+    <template>
+        <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
+            <h1>hello</h1>
+        </div>
+    </template>
+</turbo-stream>
