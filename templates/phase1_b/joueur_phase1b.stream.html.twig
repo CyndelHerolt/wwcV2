@@ -1,6 +1,7 @@
 <turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
     <template>
         <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
+            <h2>Phase : {{ game.phase }}</h2>
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for offre in offres %}
@@ -14,7 +15,12 @@
                 {% for offre in offres %}
                 <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="offre-{{ offre.id }}" role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                     <h3>{{ offre.libelle }}</h3>
-                    <p>{{ offre.descriptionCourte }}</p>
+                    <p>{{ offre.descriptionCourte|raw }}</p>
+
+                    <form action="">
+                        <label for="reponse-{{ offre.id }}">Nous répondons à cette offre</label>
+                        <input type="checkbox" name="reponse" id="reponse-{{ offre.id }}" value="oui">
+                    </form>
                 </div>
                 {% endfor %}
             </div>

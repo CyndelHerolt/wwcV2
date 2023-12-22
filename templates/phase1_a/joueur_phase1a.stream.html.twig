@@ -2,11 +2,7 @@
     <template>
         <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
             {% if equipe != null %}
-            <ul>
-                <li><span>C.A</span> {{ equipe.cumulCa }}</li>
-                <li><span>Résultat</span> {{ equipe.passifResultat }}</li>
-                <li><span>Trésorerie</span> {{ equipe.tresorerieSoldeFinal }}</li>
-            </ul>
+            <h2>Phase : {{ game.phase }}</h2>
 
             <div class="bilan_comptable">
                 <table class="table table-bordered no-margin">
