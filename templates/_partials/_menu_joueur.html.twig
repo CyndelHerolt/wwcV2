@@ -12,7 +12,7 @@
     <div>
         <ul>
             <li
-                    {% if game.phase == "1a" %}
+                    {% if game.phase == "1a" or "1b" or "1c" or "2a" %}
                         class="active"
                         style="background-color: {{ equipe.couleur }}"
                     {% endif %}

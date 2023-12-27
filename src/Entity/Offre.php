@@ -53,6 +53,9 @@ class Offre
     #[ORM\ManyToMany(targetEntity: Equipe::class, mappedBy: 'offres')]
     private Collection $equipes;
 
+    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: Proposition::class)]
+    private Collection $propositions;
+
     public function getTypeOffre(): ?TypeOffre
     {
         return $this->type_offre;
@@ -69,6 +72,7 @@ class Offre
     {
         $this->besoin_role = new ArrayCollection();
         $this->equipes = new ArrayCollection();
+        $this->propositions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,6 +228,36 @@ class Offre
     {
         if ($this->equipes->removeElement($equipe)) {
             $equipe->removeOffre($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Proposition>
+     */
+    public function getPropositions(): Collection
+    {
+        return $this->propositions;
+    }
+
+    public function addProposition(Proposition $proposition): static
+    {
+        if (!$this->propositions->contains($proposition)) {
+            $this->propositions->add($proposition);
+            $proposition->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposition(Proposition $proposition): static
+    {
+        if ($this->propositions->removeElement($proposition)) {
+            // set the owning side to null (unless already changed)
+            if ($proposition->getOffre() === $this) {
+                $proposition->setOffre(null);
+            }
         }
 
         return $this;

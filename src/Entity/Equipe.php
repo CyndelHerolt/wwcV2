@@ -149,11 +149,15 @@ class Equipe
     #[ORM\ManyToMany(targetEntity: Offre::class, inversedBy: 'equipes')]
     private Collection $offres;
 
+    #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Proposition::class)]
+    private Collection $propositions;
+
     public function __construct()
     {
         $this->personnels = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->offres = new ArrayCollection();
+        $this->propositions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -733,6 +737,36 @@ class Equipe
     public function removeOffre(Offre $offre): static
     {
         $this->offres->removeElement($offre);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Proposition>
+     */
+    public function getPropositions(): Collection
+    {
+        return $this->propositions;
+    }
+
+    public function addProposition(Proposition $proposition): static
+    {
+        if (!$this->propositions->contains($proposition)) {
+            $this->propositions->add($proposition);
+            $proposition->setEquipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProposition(Proposition $proposition): static
+    {
+        if ($this->propositions->removeElement($proposition)) {
+            // set the owning side to null (unless already changed)
+            if ($proposition->getEquipe() === $this) {
+                $proposition->setEquipe(null);
+            }
+        }
 
         return $this;
     }
