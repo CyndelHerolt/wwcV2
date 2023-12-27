@@ -16,14 +16,6 @@ class OffreController extends AbstractController
 
     }
 
-    #[Route('/offre', name: 'app_offre')]
-    public function index(): Response
-    {
-        return $this->render('offre/index.html.twig', [
-            'controller_name' => 'OffreController',
-        ]);
-    }
-
     #[Route('/offre/{id}/visibilite/', name: 'app_offre_visibilite')]
     public function visibilite(?int $id): Response
     {

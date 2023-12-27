@@ -1,0 +1,6 @@
+<turbo-frame id="form-proposition{{ id }}">
+    <a href="{{ path('app_joueur_offre_response', {'id':offre.id}) }}"
+       data-turbo-action="replace" data-turbo-frame="form-proposition{{ offre.id }}">
+        <button class="btn btn-primary">Répondre à cette offre</button>
+    </a>
+</turbo-frame>

@@ -3,8 +3,11 @@
 namespace App\Controller\Game;
 
 use App\Controller\Phase1A\JoueurPhase1AController;
+use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Entity\Game;
 use App\Repository\GameRepository;
+use App\Repository\OffreRepository;
+use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
@@ -18,7 +21,10 @@ class JoueurGameController extends AbstractController
 {
     public function __construct(
         private JoueurPhase1AController $joueurPhase1AController,
-        private HubInterface $hub,
+        private JoueurPhase1BController $joueurPhase1BController,
+        private OffreRepository         $offreRepository,
+        private PropositionRepository   $propositionRepository,
+        private HubInterface            $hub,
     )
     {
     }
@@ -50,7 +56,7 @@ class JoueurGameController extends AbstractController
     }
 
     public function joueur_phase1A(
-        ?Game       $game,
+        ?Game $game,
     ): void
     {
         $equipe = $this->getUser()->getEquipe();
@@ -66,7 +72,7 @@ class JoueurGameController extends AbstractController
     }
 
     public function joueur_phase1B(
-        ?Game       $game,
+        ?Game $game,
     ): void
     {
         $equipe = $this->getUser()->getEquipe();
