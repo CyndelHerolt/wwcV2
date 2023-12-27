@@ -3,7 +3,9 @@
 namespace App\Controller\Game;
 
 use App\Classes\DataUserSession;
+use App\Controller\Phase1A\JoueurPhase1AController;
 use App\Controller\Phase1A\MaitrePhase1AController;
+use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
@@ -22,6 +24,8 @@ class MaitreGameController extends AbstractController
         private MaitrePhase1AController $maitrePhase1AController,
         private MaitrePhase1BController $maitrePhase1BController,
         private JoueurGameController    $joueurGameController,
+        private JoueurPhase1AController $joueurPhase1AController,
+        private JoueurPhase1BController $joueurPhase1BController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private HubInterface            $hub,
@@ -66,7 +70,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
-            $this->joueurGameController->joueur_phase1B($game);
+            $this->joueurPhase1BController->index($game);
         } elseif ($game->getPhase() === "1b") {
             $game->setPhase("1c");
         }
@@ -87,7 +91,7 @@ class MaitreGameController extends AbstractController
 
         if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
-            $this->joueurGameController->joueur_phase1A($game);
+            $this->joueurPhase1AController->index($game);
         } elseif ($game->getPhase() === "1c") {
             $game->setPhase("1b");
         }
@@ -98,7 +102,8 @@ class MaitreGameController extends AbstractController
 
     //todo: publier une update mercure pour passer le jeu en pause côté joueurs
     #[Route('/pause/{id}', name: 'app_maitre_game_pause')]
-    public function pause(?int $id) {
+    public function pause(?int $id)
+    {
         $game = $this->gameRepository->find($id);
         $game->setPause(!$game->isPause());
         $this->gameRepository->save($game);

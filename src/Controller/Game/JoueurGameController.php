@@ -20,11 +20,6 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class JoueurGameController extends AbstractController
 {
     public function __construct(
-        private JoueurPhase1AController $joueurPhase1AController,
-        private JoueurPhase1BController $joueurPhase1BController,
-        private OffreRepository         $offreRepository,
-        private PropositionRepository   $propositionRepository,
-        private HubInterface            $hub,
     )
     {
     }
@@ -44,52 +39,14 @@ class JoueurGameController extends AbstractController
             return $this->redirectToRoute('app_logout');
         }
 
-        if ($game->getPhase() === "1a") {
-            $this->joueurPhase1AController->index($game, $equipe);
-        }
+//        if ($game->getPhase() === "1a") {
+//            $this->joueurPhase1AController->index($game);
+//        }
 
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,
             'equipe' => $equipe,
             'offres' => $offres ?? null,
         ]);
-    }
-
-    public function joueur_phase1A(
-        ?Game $game,
-    ): void
-    {
-        $equipe = $this->getUser()->getEquipe();
-
-        $this->hub->publish(new Update(
-            'game-joueur/' . $game->getId(),
-            $this->renderView('phase1_a/joueur_phase1a.stream.html.twig', [
-                'game' => $game,
-                'equipe' => $equipe,
-            ]),
-            false
-        ));
-    }
-
-    public function joueur_phase1B(
-        ?Game $game,
-    ): void
-    {
-        $equipe = $this->getUser()->getEquipe();
-
-        // récupérer toutes les offres de la game avec visible = true
-        $offres = $game->getOffres()->filter(function ($offre) {
-            return $offre->isVisible() === true;
-        });
-
-        $this->hub->publish(new Update(
-            'game-joueur/' . $game->getId(),
-            $this->renderView('phase1_b/joueur_phase1b.stream.html.twig', [
-                'game' => $game,
-                'equipe' => $equipe ?? null,
-                'offres' => $offres ?? null,
-            ]),
-            false
-        ));
     }
 }

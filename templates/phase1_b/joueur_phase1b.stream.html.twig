@@ -22,15 +22,14 @@
                         <h3>{{ offre.libelle }}</h3>
                         <p>{{ offre.descriptionCourte|raw }}</p>
 
-                        <div id="proposition" {{ turbo_stream_listen('game-joueur/'~equipe.id~'/'~offre.id) }}>
-                            <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}"
-                               data-turbo-frame="proposition-frame">
+                        <turbo-frame id="proposition-frame-{{ offre.id }}">
+                            <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
                                 <button class="btn btn-primary">Répondre à cette offre</button>
                             </a>
-                        </div>
+                        </turbo-frame>
                     </div>
-                    {% endfor %}
                 </div>
+                    {% endfor %}
             </div>
 
         </div>
