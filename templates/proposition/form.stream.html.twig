@@ -1,9 +1,10 @@
-<turbo-stream action="replace" target="proposition">
-    <a href="#">
+<turbo-frame id="proposition-frame">
+    <a href="{{ path('app_proposition_delete', {id:proposition.id}) }}">
         <button class="btn btn-primary">Annuler la proposition</button>
     </a>
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
-</turbo-stream>
+    {{ form_row(form.type) }}
+    {{ form_row(form.prix) }}
+{#    {{ form_end(form) }}#}
+</turbo-frame>

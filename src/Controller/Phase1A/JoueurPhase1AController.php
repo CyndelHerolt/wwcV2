@@ -18,12 +18,12 @@ class JoueurPhase1AController extends AbstractController
     {
     }
 
-//    #[Route('/joueur/phase1/a', name: 'app_joueur_phase1_a')]
     public function index(
         ?Game       $game,
-        ?Equipe     $equipe,
     ): void
     {
+        $equipe = $this->getUser()->getEquipe();
+
         $this->hub->publish(new Update(
             'game-joueur/' . $game->getId(),
             $this->renderView('phase1_a/joueur_phase1a.stream.html.twig', [

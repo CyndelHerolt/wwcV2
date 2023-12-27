@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Entity\Proposition;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
@@ -21,6 +22,7 @@ class PropositionController extends AbstractController
         private PropositionRepository $propositionRepository,
         private OffreRepository       $offreRepository,
         private EquipeRepository      $equipeRepository,
+        private JoueurPhase1BController $joueurPhase1BController,
     )
     {
     }
@@ -48,15 +50,26 @@ class PropositionController extends AbstractController
             false
         ));
 
-        return $this->redirectToRoute('app_joueur_game');
+        return $this->render('proposition/form.stream.html.twig', [
+            'proposition' => $proposition,
+            'form' => $form->createView(),
+        ]);
     }
 
-//    #[Route('/proposition/delete/{id}', name: 'app_proposition_delete')]
-//    public function delete(?int $id): Response
-//    {
-//        $proposition = $this->propositionRepository->find($id);
-//        $this->propositionRepository->remove($proposition);
-//
-//        return $this->redirectToRoute('app_joueur_game');
-//    }
+    #[Route('/proposition/delete/{id}', name: 'app_proposition_delete')]
+    public function delete(?int $id): Response
+    {
+        $proposition = $this->propositionRepository->find($id);
+
+        $offre = $proposition->getOffre();
+        $equipe = $proposition->getEquipe();
+
+        $this->propositionRepository->remove($proposition);
+
+        return $this->render('proposition/empty_form.stream.html.twig', [
+            'proposition' => $proposition,
+            'offre' => $offre,
+            'equipe' => $equipe,
+        ]);
+    }
 }
