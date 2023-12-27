@@ -1,6 +1,5 @@
-<turbo-frame id="proposition-frame">
-    <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}"
-       data-turbo-frame="proposition-frame">
+<turbo-frame id="proposition-frame-{{ offre.id }}">
+    <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
         <button class="btn btn-primary">Répondre à cette offre</button>
     </a>
 </turbo-frame>

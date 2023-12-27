@@ -18,10 +18,10 @@ class PropositionController extends AbstractController
 {
 
     public function __construct(
-        private HubInterface          $hub,
-        private PropositionRepository $propositionRepository,
-        private OffreRepository       $offreRepository,
-        private EquipeRepository      $equipeRepository,
+        private HubInterface            $hub,
+        private PropositionRepository   $propositionRepository,
+        private OffreRepository         $offreRepository,
+        private EquipeRepository        $equipeRepository,
         private JoueurPhase1BController $joueurPhase1BController,
     )
     {
@@ -39,13 +39,14 @@ class PropositionController extends AbstractController
         $this->propositionRepository->save($proposition);
 
         // créer un formulaire pour la proposition
-         $form = $this->createForm(PropositionType::class);
+        $form = $this->createForm(PropositionType::class);
 
         $this->hub->publish(new Update(
             'game-joueur/' . $equipeId . '/' . $offreId,
             $this->renderView('proposition/form.stream.html.twig', [
                 'proposition' => $proposition,
                 'form' => $form->createView(),
+                'offre' => $offre,
             ]),
             false
         ));
@@ -53,6 +54,7 @@ class PropositionController extends AbstractController
         return $this->render('proposition/form.stream.html.twig', [
             'proposition' => $proposition,
             'form' => $form->createView(),
+            'offre' => $offre,
         ]);
     }
 
@@ -67,7 +69,6 @@ class PropositionController extends AbstractController
         $this->propositionRepository->remove($proposition);
 
         return $this->render('proposition/empty_form.stream.html.twig', [
-            'proposition' => $proposition,
             'offre' => $offre,
             'equipe' => $equipe,
         ]);
