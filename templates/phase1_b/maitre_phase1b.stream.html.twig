@@ -1,7 +1,39 @@
 <turbo-stream action="replace" target="phase">
     <template>
         <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
-            <h1>hello</h1>
+            <table>
+                <thead>
+                <tr>
+                    <th>Equipe</th>
+
+                    {% for offre in offres %}
+                        <th>{{ offre.libelle }}</th>
+
+                    {% endfor %}
+                </tr>
+                </thead>
+                {% for equipe in equipes %}
+                    <tbody>
+                    <tr>
+                        <td>{{ equipe.nom }}</td>
+                        {% for offre in offres %}
+                            <td>
+                                {% if offre.id in equipe.offres %}
+                                    ok
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% for proposition in equipe.propositions %}
+                                    {% if offre.id in proposition %}
+                                        proposé
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
         </div>
     </template>
 </turbo-stream>

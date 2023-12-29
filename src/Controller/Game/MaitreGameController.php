@@ -7,12 +7,13 @@ use App\Controller\Phase1A\JoueurPhase1AController;
 use App\Controller\Phase1A\MaitrePhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
+use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/maitre')]
@@ -28,6 +29,7 @@ class MaitreGameController extends AbstractController
         private JoueurPhase1BController $joueurPhase1BController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
+        private EquipeRepository        $equipeRepository,
         private HubInterface            $hub,
     )
     {
@@ -49,12 +51,14 @@ class MaitreGameController extends AbstractController
             $this->maitrePhase1AController->maitre_phase($game, $offres);
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game);
+            $equipes = $this->equipeRepository->findBy(['game' => $game]);
+            $this->maitrePhase1BController->index($game, $offres, $equipes);
         }
 
         return $this->render('maitre_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
+            'equipes' => $equipes ?? null,
         ]);
     }
 

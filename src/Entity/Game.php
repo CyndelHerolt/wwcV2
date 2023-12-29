@@ -98,11 +98,15 @@ class Game
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'game')]
     private Collection $users;
 
+    #[ORM\OneToMany(mappedBy: 'game', targetEntity: Equipe::class)]
+    private Collection $equipes;
+
     public function __construct()
     {
         $this->offres = new ArrayCollection();
         $this->typeOffres = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->equipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -485,6 +489,36 @@ class Game
     {
         if ($this->users->removeElement($user)) {
             $user->removeGame($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipe>
+     */
+    public function getEquipes(): Collection
+    {
+        return $this->equipes;
+    }
+
+    public function addEquipe(Equipe $equipe): static
+    {
+        if (!$this->equipes->contains($equipe)) {
+            $this->equipes->add($equipe);
+            $equipe->setGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEquipe(Equipe $equipe): static
+    {
+        if ($this->equipes->removeElement($equipe)) {
+            // set the owning side to null (unless already changed)
+            if ($equipe->getGame() === $this) {
+                $equipe->setGame(null);
+            }
         }
 
         return $this;

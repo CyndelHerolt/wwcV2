@@ -21,6 +21,19 @@ class EquipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Equipe::class);
     }
 
+    public function findByUser($user): ?Equipe
+    {
+//        récupérer l'equipe qui contient user dans ses users
+        $equipe = $this->createQueryBuilder('e')
+            ->leftJoin('e.users', 'u')
+            ->andWhere('u.id = :user')
+            ->setParameter('user', $user->getId())
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $equipe;
+    }
+
 //    /**
 //     * @return Equipe[] Returns an array of Equipe objects
 //     */
