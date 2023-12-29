@@ -152,6 +152,9 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Proposition::class)]
     private Collection $propositions;
 
+    #[ORM\ManyToOne(inversedBy: 'equipes')]
+    private ?Game $game = null;
+
     public function __construct()
     {
         $this->personnels = new ArrayCollection();
@@ -767,6 +770,18 @@ class Equipe
                 $proposition->setEquipe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getGame(): ?Game
+    {
+        return $this->game;
+    }
+
+    public function setGame(?Game $game): static
+    {
+        $this->game = $game;
 
         return $this;
     }
