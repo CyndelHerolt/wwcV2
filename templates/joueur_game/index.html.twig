@@ -1,15 +1,15 @@
 {% extends 'base_joueur.html.twig' %}
+            {% set equipe = app.user.equipe %}
 
 {% block title %}Hello JoueurGameController!{% endblock %}
 
 {% block body %}
     <section class="container-fluid">
         <h1>Game {{ game.id }}</h1>
-{#        <h2>Phase : {{ game.phase }}</h2>#}
 
         <div class="row flex-row justify-content-between">
             <article class="col-lg-10 col-12">
-                <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
+                <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/equipe/'~equipe.id) }}>
                     {% if game.phase == '1a' %}
                         {{ include('phase1_a/joueur_phase1a.stream.html.twig') }}
                     {% elseif game.phase == '1b' %}
@@ -19,27 +19,27 @@
             </article>
             <aside class="col-lg-2 col-12">
                 <div class="card h-100">
-                <ul>
-                    <li><span>C.A</span> {{ equipe.cumulCa }}</li>
-                    <li><span>Résultat</span> {{ equipe.passifResultat }}</li>
-                    <li><span>Trésorerie</span> {{ equipe.tresorerieSoldeFinal }}</li>
-                    <li><span>Projets</span>
-                        {% set nbProjets = 0 %}
-                        {% for offre in offres %}
-                            {% if offre.equipes == equipe %}
-                                {% set nbProjets = nbProjets + 1 %}
-                            {% endif %}
-                        {% endfor %}
-                        {{ nbProjets }}
-                    </li>
-                    <li><span>Salariés</span>
-                        {% set nbSalaries = 0 %}
-                        {% for salarie in equipe.personnels %}
-                            {% set nbSalaries = nbSalaries + 1 %}
-                        {% endfor %}
-                        {{ nbSalaries }}
-                    </li>
-                </ul>
+                    <ul>
+                        <li><span>C.A</span> {{ equipe.cumulCa }}</li>
+                        <li><span>Résultat</span> {{ equipe.passifResultat }}</li>
+                        <li><span>Trésorerie</span> {{ equipe.tresorerieSoldeFinal }}</li>
+                        <li><span>Projets</span>
+                            {% set nbProjets = 0 %}
+                            {% for offre in offres %}
+                                {% if offre.equipes == equipe %}
+                                    {% set nbProjets = nbProjets + 1 %}
+                                {% endif %}
+                            {% endfor %}
+                            {{ nbProjets }}
+                        </li>
+                        <li><span>Salariés</span>
+                            {% set nbSalaries = 0 %}
+                            {% for salarie in equipe.personnels %}
+                                {% set nbSalaries = nbSalaries + 1 %}
+                            {% endfor %}
+                            {{ nbSalaries }}
+                        </li>
+                    </ul>
                 </div>
             </aside>
         </div>

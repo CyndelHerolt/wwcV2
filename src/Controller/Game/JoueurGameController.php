@@ -29,7 +29,8 @@ class JoueurGameController extends AbstractController
     public function index(): Response
     {
         $game = $this->getUser()->getGame()->first();
-        $equipe = $this->getUser()->getEquipe();
+//        $equipe = $this->getUser()->getEquipe();
+
         // récupérer toutes les offres de la game avec visible = true
         $offres = $game->getOffres()->filter(function ($offre) {
             return $offre->isVisible() === true;
@@ -46,13 +47,9 @@ class JoueurGameController extends AbstractController
             return $this->redirectToRoute('app_logout');
         }
 
-//        if ($game->getPhase() === "1a") {
-//            $this->joueurPhase1AController->index($game);
-//        }
-
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,
-            'equipe' => $equipe,
+//            'equipe' => $equipe,
             'offres' => $offres ?? null,
             'forms' => $forms ?? null,
         ]);

@@ -1,7 +1,7 @@
 <turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
     <template>
-        {% set equipe = app.user.equipe %}
-        <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id) }}>
+{#        {% set equipe = app.user.equipe %}#}
+        <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/equipe/'~equipe.id) }}>
             <h2>Phase : {{ game.phase }}</h2>
 
             <ul class="nav nav-tabs" id="myTab" role="tablist">
