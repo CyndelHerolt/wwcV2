@@ -98,6 +98,7 @@ class MaitreGameController extends AbstractController
             $this->joueurPhase1AController->index($game);
         } elseif ($game->getPhase() === "1c") {
             $game->setPhase("1b");
+            $this->joueurPhase1BController->index($game);
         }
         $this->gameRepository->save($game, true);
 

@@ -19,18 +19,22 @@ class JoueurPhase1AController extends AbstractController
     }
 
     public function index(
-        ?Game       $game,
+        ?Game $game,
     ): void
     {
-        $equipe = $this->getUser()->getEquipe();
+        // récupérer toutes les équipes de la game
+        $equipes = $game->getEquipes();
 
-        $this->hub->publish(new Update(
-            'game-joueur/' . $game->getId(),
-            $this->renderView('phase1_a/joueur_phase1a.stream.html.twig', [
-                'equipe' => $equipe,
-                'game' => $game,
-            ]),
-            false
-        ));
+        // envoyer une mise à jour Mercure pour chaque équipe
+        foreach ($equipes as $equipe) {
+            $this->hub->publish(new Update(
+                'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
+                $this->renderView('phase1_a/joueur_phase1a.stream.html.twig', [
+                    'game' => $game,
+                    'equipe' => $equipe,
+                ]),
+                false
+            ));
+        }
     }
 }

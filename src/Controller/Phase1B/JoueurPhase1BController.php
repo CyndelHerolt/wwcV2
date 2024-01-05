@@ -16,8 +16,8 @@ use Symfony\Component\Mercure\Update;
 class JoueurPhase1BController extends AbstractController
 {
     public function __construct(
-        private HubInterface     $hub,
-        private EquipeRepository $equipeRepository,
+        private HubInterface $hub,
+//        private EquipeRepository $equipeRepository,
     )
     {
     }
@@ -26,21 +26,32 @@ class JoueurPhase1BController extends AbstractController
         ?Game $game,
     ): void
     {
-        $equipe = $this->getUser()->getEquipe();
-
         // récupérer toutes les offres de la game avec visible = true
         $offres = $game->getOffres()->filter(function ($offre) {
             return $offre->isVisible() === true;
         });
 
-        $this->hub->publish(new Update(
-            'game-joueur/' . $game->getId(),
-            $this->renderView('phase1_b/joueur_phase1b.stream.html.twig', [
-                'game' => $game,
-                'equipe' => $equipe ?? null,
-                'offres' => $offres ?? null,
-            ]),
-            false
-        ));
+        // créer un formulaire pour chaque proposition
+        $forms = [];
+        foreach ($offres as $offre) {
+            $forms[$offre->getId()] = $this->createForm(PropositionType::class)->createView();
+        }
+
+        // récupérer toutes les équipes de la game
+        $equipes = $game->getEquipes();
+
+        // envoyer une mise à jour Mercure pour chaque équipe
+        foreach ($equipes as $equipe) {
+            $this->hub->publish(new Update(
+                'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
+                $this->renderView('phase1_b/joueur_phase1b.stream.html.twig', [
+                    'game' => $game,
+                    'equipe' => $equipe,
+                    'offres' => $offres,
+                    'forms' => $forms,
+                ]),
+                false
+            ));
+        }
     }
 }
