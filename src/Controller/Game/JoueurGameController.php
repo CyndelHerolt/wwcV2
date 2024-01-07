@@ -2,17 +2,11 @@
 
 namespace App\Controller\Game;
 
-use App\Controller\Phase1A\JoueurPhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
-use App\Entity\Game;
 use App\Form\PropositionType;
-use App\Repository\GameRepository;
-use App\Repository\OffreRepository;
-use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -21,12 +15,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class JoueurGameController extends AbstractController
 {
     public function __construct(
+        private JoueurPhase1BController $joueurPhase1BController,
     )
     {
     }
 
-    #[Route('/', name: 'app_joueur_game')]
-    public function index(): Response
+    #[Route('/', name: 'app_joueur_game', methods: ['GET', 'POST'])]
+    public function index(Request $request): Response
     {
         $game = $this->getUser()->getGame()->first();
 //        $equipe = $this->getUser()->getEquipe();
@@ -47,9 +42,12 @@ class JoueurGameController extends AbstractController
             return $this->redirectToRoute('app_logout');
         }
 
+        if ($game->getPhase() === '1b') {
+            $this->joueurPhase1BController->index($game);
+        }
+
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,
-//            'equipe' => $equipe,
             'offres' => $offres ?? null,
             'forms' => $forms ?? null,
         ]);

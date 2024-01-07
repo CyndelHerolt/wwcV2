@@ -1,6 +1,5 @@
 <turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
     <template>
-{#        {% set equipe = app.user.equipe %}#}
         <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/equipe/'~equipe.id) }}>
             <h2>Phase : {{ game.phase }}</h2>
 
@@ -25,26 +24,30 @@
 
                             <turbo-frame id="proposition-frame-{{ offre.id }}">
                                 {% if equipe is not null %}
-                                {#              Si il existe une proposition de cette equipe pour cette offre              #}
-                                {% for proposition in offre.propositions %}
-                                    {% if proposition.equipe.id == equipe.id %}
-                                        <a href="{{ path('app_proposition_delete', {id:proposition.id}) }}">
-                                            <button class="btn btn-primary">Annuler la proposition</button>
-                                        </a>
-                                        {{ form_start(forms[offre.id]) }}
-                                        {{ form_row(forms[offre.id].type) }}
-                                        {{ form_row(forms[offre.id].prix) }}
-                                    {% else %}
+                                    {#              Si il existe une proposition de cette equipe pour cette offre              #}
+                                    {% for proposition in offre.propositions %}
+                                        {% if proposition.equipe.id == equipe.id %}
+                                            <a href="{{ path('app_proposition_delete', {id:proposition.id}) }}">
+                                                <button class="btn btn-danger">Annuler la proposition</button>
+                                            </a>
+                                            {{ form_start(forms[offre.id], {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
+                                            {{ form_row(forms[offre.id].type) }}
+                                            {{ form_row(forms[offre.id].prix) }}
+{#                                            <a href="{{ path('app_proposition_update', {'id':proposition.id}) }}">#}
+                                                <button class="btn btn-primary" type="submit">Modifier la proposition</button>
+{#                                            </a>#}
+                                            {{ form_end(forms[offre.id]) }}
+                                        {% else %}
+                                            <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
+                                                <button class="btn btn-primary">Répondre à cette offre</button>
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if offre.propositions is empty %}
                                         <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
                                             <button class="btn btn-primary">Répondre à cette offre</button>
                                         </a>
                                     {% endif %}
-                                {% endfor %}
-                                {% if offre.propositions is empty %}
-                                    <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
-                                        <button class="btn btn-primary">Répondre à cette offre</button>
-                                    </a>
-                                {% endif %}
                                 {% endif %}
                             </turbo-frame>
                         </div>

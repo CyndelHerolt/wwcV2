@@ -7,6 +7,7 @@ use App\Entity\TypeOffre;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,12 +22,14 @@ class PropositionType extends AbstractType
                     'class' => 'form-control',
                     'placeholder' => 'Prix',
                 ],
+                'mapped' => true,
             ])
-//            ->add('etat')
             ->add('type', EntityType::class, [
                 'class' => TypeOffre::class,
                 'choice_label' => 'libelle',
-            ]);
+                'mapped' => true,
+            ])
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

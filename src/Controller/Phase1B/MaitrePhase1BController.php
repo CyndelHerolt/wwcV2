@@ -30,17 +30,4 @@ class MaitrePhase1BController extends AbstractController
             false
         ));
     }
-
-    public function joueur_phase(
-        ?Game       $game,
-    ): void
-    {
-        $this->hub->publish(new Update(
-            'game-joueur/' . $game->getId(),
-            $this->renderView('phase1_b/joueur_phase1b.stream.html.twig', [
-                'game' => $game,
-            ]),
-            false
-        ));
-    }
 }

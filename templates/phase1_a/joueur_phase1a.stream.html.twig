@@ -1,8 +1,6 @@
 <turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
     <template>
         <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/equipe/'~equipe.id) }}>
-{#            {% set equipe = app.user.equipe %}#}
-            {% if equipe != null %}
             <h2>Phase : {{ game.phase }}</h2>
 
             <div class="bilan_comptable">
@@ -102,8 +100,5 @@
                 </table>
             </div>
         </div>
-        {% else %}
-        <h3>TEST</h3>
-        {% endif %}
     </template>
 </turbo-stream>

@@ -2,13 +2,10 @@
 
 namespace App\Controller\Phase1A;
 
-use App\Entity\Equipe;
 use App\Entity\Game;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
-use Symfony\Component\Routing\Annotation\Route;
 
 class JoueurPhase1AController extends AbstractController
 {
