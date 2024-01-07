@@ -9,6 +9,7 @@ use App\Repository\EquipeRepository;
 use App\Repository\OffreRepository;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -39,7 +40,7 @@ class PropositionController extends AbstractController
         $this->propositionRepository->save($proposition);
 
         // créer un formulaire pour la proposition
-        $form = $this->createForm(PropositionType::class);
+        $form = $this->createForm(PropositionType::class, $proposition);
 
         $this->hub->publish(new Update(
             'game-joueur/' . $equipeId . '/' . $offreId,
@@ -57,6 +58,31 @@ class PropositionController extends AbstractController
             'offre' => $offre,
         ]);
     }
+
+#[Route('/proposition/{id}/update', name: 'app_proposition_update', methods: ['POST'])]
+public function update(?int $id, Request $request): Response
+{
+    $proposition = $this->propositionRepository->find($id);
+
+    $form = $this->createForm(PropositionType::class, $proposition);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        // The $proposition object now contains the submitted data
+        // You can now save $proposition to the database
+
+        $this->propositionRepository->save($proposition);
+
+        // Redirect to the game page or another appropriate page
+        return $this->redirectToRoute('app_joueur_game');
+    }
+
+    // If the form is not submitted or not valid, re-display the form
+    return $this->render('proposition/form.stream.html.twig', [
+        'offre' => $proposition->getOffre(),
+        'proposition' => $proposition,
+        'form' => $form->createView(),
+    ]);
+}
 
     #[Route('/proposition/delete/{id}', name: 'app_proposition_delete')]
     public function delete(?int $id): Response

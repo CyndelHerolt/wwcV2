@@ -1,39 +1,53 @@
 <turbo-stream action="replace" target="phase">
     <template>
         <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
-            <table>
-                <thead>
-                <tr>
-                    <th>Equipe</th>
-
-                    {% for offre in offres %}
-                        <th>{{ offre.libelle }}</th>
-
-                    {% endfor %}
-                </tr>
-                </thead>
-                {% for equipe in equipes %}
-                    <tbody>
-                    <tr>
-                        <td>{{ equipe.nom }}</td>
-                        {% for offre in offres %}
-                            <td>
-                                {% if offre.id in equipe.offres %}
-                                    ok
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% for proposition in equipe.propositions %}
-                                    {% if offre.id in proposition %}
-                                        proposé
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        {% endfor %}
-                    </tr>
-                    </tbody>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for offre in offres %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {% if loop.first %}active{% endif %}" id="offre-{{ offre.id }}-tab"
+                           data-bs-toggle="tab" href="#offre-{{ offre.id }}" role="tab"
+                           aria-controls="offre-{{ offre.id }}"
+                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ offre.libelle }}</a>
+                    </li>
                 {% endfor %}
-            </table>
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                {% for offre in offres %}
+                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}" id="offre-{{ offre.id }}"
+                         role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
+                        <div class="card-body">
+                            <h3>{{ offre.libelle }}</h3>
+
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>Equipe</th>
+                                    <th>Proposition</th>
+                                    <th>Type projet</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for equipe in equipes %}
+                                    <tr>
+                                            {% if equipe.propositions[offre.id] is defined %}
+                                        <td>{{ equipe.nom }}</td>
+                                        <td>{{ equipe.propositions[offre.id].prix }}</td>
+                                        {% if equipe.propositions[offre.id].type is not null %}
+                                            <td>{{ equipe.propositions[offre.id].type.libelle }}</td>
+                                        {% else %}
+                                            <td>Non défini</td>
+                                        {% endif %}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
         </div>
     </template>
 </turbo-stream>
