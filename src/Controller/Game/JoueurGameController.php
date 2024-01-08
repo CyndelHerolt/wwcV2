@@ -4,6 +4,7 @@ namespace App\Controller\Game;
 
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Form\PropositionType;
+use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ class JoueurGameController extends AbstractController
 {
     public function __construct(
         private JoueurPhase1BController $joueurPhase1BController,
+        private OffreRepository $offreRepository,
     )
     {
     }
@@ -23,18 +25,17 @@ class JoueurGameController extends AbstractController
     #[Route('/', name: 'app_joueur_game', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
-        $game = $this->getUser()->getGame()->first();
+        $game = $this->getUser()->getEquipe()->getGame();
 //        $equipe = $this->getUser()->getEquipe();
 
-        // récupérer toutes les offres de la game avec visible = true
-        $offres = $game->getOffres()->filter(function ($offre) {
-            return $offre->isVisible() === true;
-        });
+        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
 
         // créer un formulaire pour chaque proposition
         $forms = [];
         foreach ($offres as $offre) {
-            $forms[$offre->getId()] = $this->createForm(PropositionType::class)->createView();
+            foreach ($offre->getPropositions() as $proposition) {
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+            }
         }
 
         if ($game === null) {

@@ -28,14 +28,12 @@ class JoueurPhase1BController extends AbstractController
         });
 
         // créer un formulaire pour chaque proposition
+        // créer un formulaire pour chaque proposition
         $forms = [];
         foreach ($offres as $offre) {
-            // récupérer la proposition de cette equipe liée à cette offre
-            $proposition = $this->propositionRepository->findOneBy([
-                'equipe' => $this->getUser()->getEquipe(),
-                'offre' => $offre,
-            ]);
-            $forms[$offre->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+            foreach ($offre->getPropositions() as $proposition) {
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+            }
         }
 
         // récupérer toutes les équipes de la game

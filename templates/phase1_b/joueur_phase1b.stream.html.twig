@@ -30,14 +30,13 @@
                                             <a href="{{ path('app_proposition_delete', {id:proposition.id}) }}">
                                                 <button class="btn btn-danger">Annuler la proposition</button>
                                             </a>
-                                            {{ form_start(forms[offre.id], {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
-                                            {{ form_row(forms[offre.id].type) }}
-                                            {{ form_row(forms[offre.id].prix) }}
-{#                                            <a href="{{ path('app_proposition_update', {'id':proposition.id}) }}">#}
+                                            {{ form_start(forms[offre.id][proposition.equipe.id], {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
+                                            {{ form_row(forms[offre.id][proposition.equipe.id].type) }}
+                                            {{ form_row(forms[offre.id][proposition.equipe.id].prix) }}
                                                 <button class="btn btn-primary" type="submit">Modifier la proposition</button>
-{#                                            </a>#}
-                                            {{ form_end(forms[offre.id]) }}
-                                        {% else %}
+                                            {{ form_end(forms[offre.id][proposition.equipe.id]) }}
+
+                                        {% elseif offre.propositions|filter(e => e.equipe.id == equipe.id)|length == 0 %}
                                             <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
                                                 <button class="btn btn-primary">Répondre à cette offre</button>
                                             </a>
