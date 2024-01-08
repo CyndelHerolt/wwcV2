@@ -11,6 +11,7 @@ use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,7 @@ class MaitreGameController extends AbstractController
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
         private HubInterface            $hub,
+        private readonly RequestStack            $session,
     )
     {
     }
@@ -54,7 +56,12 @@ class MaitreGameController extends AbstractController
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game, $offres, $equipes, null);
+            if($this->session->getSession()->get('offre') !== null) {
+                $offreUpdated = $this->session->getSession()->get('offre');
+            } else {
+                $offreUpdated = null;
+            }
+            $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
         }
 
         return $this->render('maitre_game/index.html.twig', [

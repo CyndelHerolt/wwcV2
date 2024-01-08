@@ -25,7 +25,7 @@ class PropositionController extends AbstractController
         private OffreRepository         $offreRepository,
         private EquipeRepository        $equipeRepository,
         private MaitrePhase1BController $maitrePhase1BController,
-        private readonly RequestStack $session,
+        private readonly RequestStack   $session,
     )
     {
     }
@@ -57,7 +57,7 @@ class PropositionController extends AbstractController
         $game = $this->getUser()->getEquipe()->getGame();
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
         $equipes = $this->equipeRepository->findBy(['game' => $game]);
-        $this->maitrePhase1BController->index($game, $offres, $equipes,null);
+        $this->maitrePhase1BController->index($game, $offres, $equipes, null);
 
         return $this->render('proposition/form.stream.html.twig', [
             'proposition' => $proposition,
@@ -66,38 +66,38 @@ class PropositionController extends AbstractController
         ]);
     }
 
-#[Route('/proposition/{id}/update', name: 'app_proposition_update', methods: ['POST'])]
-public function update(?int $id, Request $request): Response
-{
-    $proposition = $this->propositionRepository->find($id);
+    #[Route('/proposition/{id}/update', name: 'app_proposition_update', methods: ['POST'])]
+    public function update(?int $id, Request $request): Response
+    {
+        $proposition = $this->propositionRepository->find($id);
 
-    $form = $this->createForm(PropositionType::class, $proposition);
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()) {
-        // The $proposition object now contains the submitted data
-        // You can now save $proposition to the database
+        $form = $this->createForm(PropositionType::class, $proposition);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // The $proposition object now contains the submitted data
+            // You can now save $proposition to the database
 
-        $this->propositionRepository->save($proposition);
-        // ajouter l'offre à la session
-        $this->session->getSession()->set('offre', $proposition->getOffre());
+            $this->propositionRepository->save($proposition);
+            // ajouter l'offre à la session
+            $this->session->getSession()->set('offre', $proposition->getOffre());
 
-        $game = $this->getUser()->getEquipe()->getGame();
-        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
-        $equipes = $this->equipeRepository->findBy(['game' => $game]);
-        $this->maitrePhase1BController->index($game, $offres, $equipes, $this->session->getSession()->get('offre')->getId());
+            $game = $this->getUser()->getEquipe()->getGame();
+            $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+            $equipes = $this->equipeRepository->findBy(['game' => $game]);
+            $this->maitrePhase1BController->index($game, $offres, $equipes, $this->session->getSession()->get('offre')->getId());
 
 
-        // Redirect to the game page or another appropriate page
-        return $this->redirectToRoute('app_joueur_game');
+            // Redirect to the game page or another appropriate page
+            return $this->redirectToRoute('app_joueur_game');
+        }
+
+        // If the form is not submitted or not valid, re-display the form
+        return $this->render('proposition/form.stream.html.twig', [
+            'offre' => $proposition->getOffre(),
+            'proposition' => $proposition,
+            'form' => $form->createView(),
+        ]);
     }
-
-    // If the form is not submitted or not valid, re-display the form
-    return $this->render('proposition/form.stream.html.twig', [
-        'offre' => $proposition->getOffre(),
-        'proposition' => $proposition,
-        'form' => $form->createView(),
-    ]);
-}
 
     #[Route('/proposition/delete/{id}', name: 'app_proposition_delete')]
     public function delete(?int $id): Response
@@ -122,6 +122,8 @@ public function update(?int $id, Request $request): Response
 
         $proposition->setEtat(!$proposition->isEtat());
         $this->propositionRepository->save($proposition);
+
+        $this->session->getSession()->set('offre', $proposition->getOffre()->getId());
 
         return $this->redirectToRoute('app_maitre_game');
     }
