@@ -10,6 +10,7 @@ use App\Repository\OffreRepository;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
@@ -24,6 +25,7 @@ class PropositionController extends AbstractController
         private OffreRepository         $offreRepository,
         private EquipeRepository        $equipeRepository,
         private MaitrePhase1BController $maitrePhase1BController,
+        private readonly RequestStack $session,
     )
     {
     }
@@ -55,7 +57,7 @@ class PropositionController extends AbstractController
         $game = $this->getUser()->getEquipe()->getGame();
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
         $equipes = $this->equipeRepository->findBy(['game' => $game]);
-        $this->maitrePhase1BController->index($game, $offres, $equipes);
+        $this->maitrePhase1BController->index($game, $offres, $equipes,null);
 
         return $this->render('proposition/form.stream.html.twig', [
             'proposition' => $proposition,
@@ -76,11 +78,14 @@ public function update(?int $id, Request $request): Response
         // You can now save $proposition to the database
 
         $this->propositionRepository->save($proposition);
+        // ajouter l'offre à la session
+        $this->session->getSession()->set('offre', $proposition->getOffre());
 
         $game = $this->getUser()->getEquipe()->getGame();
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
         $equipes = $this->equipeRepository->findBy(['game' => $game]);
-        $this->maitrePhase1BController->index($game, $offres, $equipes);
+        $this->maitrePhase1BController->index($game, $offres, $equipes, $this->session->getSession()->get('offre')->getId());
+
 
         // Redirect to the game page or another appropriate page
         return $this->redirectToRoute('app_joueur_game');

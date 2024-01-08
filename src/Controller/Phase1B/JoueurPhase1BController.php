@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Form\PropositionType;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -14,6 +15,7 @@ class JoueurPhase1BController extends AbstractController
     public function __construct(
         private HubInterface $hub,
         protected PropositionRepository $propositionRepository,
+        private readonly RequestStack $session,
     )
     {
     }
@@ -39,6 +41,10 @@ class JoueurPhase1BController extends AbstractController
         // récupérer toutes les équipes de la game
         $equipes = $game->getEquipes();
 
+        // récupérer l'offre dans la session
+        $offreUpdated = $this->session->getSession()->get('offre');
+        dump($offreUpdated);
+
         // envoyer une mise à jour Mercure pour chaque équipe
         foreach ($equipes as $equipe) {
             $this->hub->publish(new Update(
@@ -48,6 +54,7 @@ class JoueurPhase1BController extends AbstractController
                     'equipe' => $equipe,
                     'offres' => $offres,
                     'forms' => $forms,
+                    'offreUpdated' => $offreUpdated,
                 ]),
                 false
             ));

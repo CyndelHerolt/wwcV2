@@ -4,7 +4,7 @@
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for offre in offres %}
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {% if loop.first %}active{% endif %}" id="offre-{{ offre.id }}-tab"
+                        <a class="nav-link {% if offreUpdated is defined and offreUpdated == offre %}active{% elseif offreUpdated is not defined and loop.first %}active{% endif %}" id="offre-{{ offre.id }}-tab"
                            data-bs-toggle="tab" href="#offre-{{ offre.id }}" role="tab"
                            aria-controls="offre-{{ offre.id }}"
                            aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ offre.libelle }}</a>
@@ -14,12 +14,14 @@
 
             <div class="tab-content" id="myTabContent">
                 {% for offre in offres %}
-                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}" id="offre-{{ offre.id }}"
+                    <div class="card tab-pane fade
+                    {% if offreUpdated is defined and offreUpdated == offre %}show active{% elseif offreUpdated is not defined and loop.first %}show active{% endif %}" id="offre-{{ offre.id }}"
                          role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                         <div class="card-body">
                             <h3>{{ offre.libelle }}</h3>
                             <p>
-                                    {{ offre.typeOffre.libelle }} | {{ offre.prixMin|format_currency('EUR', locale='fr') }} - {{ offre.prixMax|format_currency('EUR', locale='fr') }}
+                                {{ offre.typeOffre.libelle }} | {{ offre.prixMin|format_currency('EUR', locale='fr') }}
+                                - {{ offre.prixMax|format_currency('EUR', locale='fr') }}
                             </p>
                             <table>
                                 <thead>
@@ -37,32 +39,33 @@
                                             <td>{{ proposition.equipe.nom }}</td>
                                             {% if proposition.type is not null %}
                                                 <td
-                                                {% if proposition.type.libelle == offre.typeOffre.libelle %}
-                                                    style="color: green"
-                                                {% else %}
-                                                    style="color: red"
-                                                {% endif %}
+                                                        {% if proposition.type.libelle == offre.typeOffre.libelle %}
+                                                            style="color: green"
+                                                        {% else %}
+                                                            style="color: red"
+                                                        {% endif %}
                                                 >{{ proposition.type.libelle }}</td>
                                             {% else %}
                                                 <td>Non défini</td>
                                             {% endif %}
-                                        {% if proposition.prix is not null %}
-                                            <td>{{ proposition.prix|format_currency('EUR', locale='fr') }}</td>
-                                        {% else %}
-                                            <td>0 €</td>
-                                        {% endif %}
+                                            {% if proposition.prix is not null %}
+                                                <td>{{ proposition.prix|format_currency('EUR', locale='fr') }}</td>
+                                            {% else %}
+                                                <td>0 €</td>
+                                            {% endif %}
                                             <turbo-frame id="state">
-                                                <td><a href="{{ path('app_proposition_state', {'id':proposition.id}) }}">
-                                                    <button class="btn
+                                                <td>
+                                                    <a href="{{ path('app_proposition_state', {'id':proposition.id}) }}">
+                                                        <button class="btn
                                         {% if proposition.etat == true %}
                                     btn-success">
-                                                        Refuser
-                                                        {% else %}
-                                                            btn-danger">
-                                                            Accepter
-                                                        {% endif %}
-                                                    </button>
-                                                </a></td>
+                                                            Refuser
+                                                            {% else %}
+                                                                btn-danger">
+                                                                Accepter
+                                                            {% endif %}
+                                                        </button>
+                                                    </a></td>
                                             </turbo-frame>
                                         {% endif %}
                                     {% endfor %}

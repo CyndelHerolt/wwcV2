@@ -6,7 +6,7 @@
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for offre in offres %}
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {% if loop.first %}active{% endif %}" id="offre-{{ offre.id }}-tab"
+                        <a class="nav-link {% if offreUpdated is defined and offreUpdated.id == offre.id %}active{% elseif offreUpdated is not defined and loop.first %}active{% endif %}" id="offre-{{ offre.id }}-tab"
                            data-bs-toggle="tab" href="#offre-{{ offre.id }}" role="tab"
                            aria-controls="offre-{{ offre.id }}"
                            aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ offre.libelle }}</a>
@@ -16,7 +16,7 @@
 
             <div class="tab-content" id="myTabContent">
                 {% for offre in offres %}
-                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}" id="offre-{{ offre.id }}"
+                    <div class="card tab-pane fade {% if offreUpdated is defined and offreUpdated.id == offre.id %}show active{% elseif offreUpdated is not defined and loop.first %}show active{% endif %}" id="offre-{{ offre.id }}"
                          role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                         <div class="card-body">
                             <h3>{{ offre.libelle }}</h3>

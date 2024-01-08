@@ -54,7 +54,7 @@ class MaitreGameController extends AbstractController
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game, $offres, $equipes);
+            $this->maitrePhase1BController->index($game, $offres, $equipes, null);
         }
 
         return $this->render('maitre_game/index.html.twig', [
