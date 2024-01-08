@@ -41,6 +41,8 @@ class MaitreGameController extends AbstractController
         $gameId = $this->dataUserSession->getGame()->getId();
         $game = $this->gameRepository->find($gameId);
 
+        $maitre = $this->getUser();
+
         if ($game === null) {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
             return $this->redirectToRoute('app_game_choice');
@@ -59,6 +61,7 @@ class MaitreGameController extends AbstractController
             'game' => $game,
             'offres' => $offres ?? null,
             'equipes' => $equipes ?? null,
+            'maitre' => $maitre ?? null,
         ]);
     }
 

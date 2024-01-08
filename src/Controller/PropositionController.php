@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Controller\Phase1B\JoueurPhase1BController;
+use App\Controller\Phase1B\MaitrePhase1BController;
 use App\Entity\Proposition;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
@@ -23,7 +23,7 @@ class PropositionController extends AbstractController
         private PropositionRepository   $propositionRepository,
         private OffreRepository         $offreRepository,
         private EquipeRepository        $equipeRepository,
-        private JoueurPhase1BController $joueurPhase1BController,
+        private MaitrePhase1BController $maitrePhase1BController,
     )
     {
     }
@@ -52,6 +52,11 @@ class PropositionController extends AbstractController
             false
         ));
 
+        $game = $this->getUser()->getEquipe()->getGame();
+        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+        $equipes = $this->equipeRepository->findBy(['game' => $game]);
+        $this->maitrePhase1BController->index($game, $offres, $equipes);
+
         return $this->render('proposition/form.stream.html.twig', [
             'proposition' => $proposition,
             'form' => $form->createView(),
@@ -71,6 +76,11 @@ public function update(?int $id, Request $request): Response
         // You can now save $proposition to the database
 
         $this->propositionRepository->save($proposition);
+
+        $game = $this->getUser()->getEquipe()->getGame();
+        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+        $equipes = $this->equipeRepository->findBy(['game' => $game]);
+        $this->maitrePhase1BController->index($game, $offres, $equipes);
 
         // Redirect to the game page or another appropriate page
         return $this->redirectToRoute('app_joueur_game');
@@ -98,5 +108,16 @@ public function update(?int $id, Request $request): Response
             'offre' => $offre,
             'equipe' => $equipe,
         ]);
+    }
+
+    #[Route('/proposition/{id}/etat/', name: 'app_proposition_state')]
+    public function changeState(?int $id): Response
+    {
+        $proposition = $this->propositionRepository->find($id);
+
+        $proposition->setEtat(!$proposition->isEtat());
+        $this->propositionRepository->save($proposition);
+
+        return $this->redirectToRoute('app_maitre_game');
     }
 }

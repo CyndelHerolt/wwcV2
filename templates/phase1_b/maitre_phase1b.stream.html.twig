@@ -1,6 +1,6 @@
 <turbo-stream action="replace" target="phase">
     <template>
-        <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
+        <div id="phase" {{ turbo_stream_listen('game-maitre/'~maitre.id) }}>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for offre in offres %}
                     <li class="nav-item" role="presentation">
@@ -18,12 +18,15 @@
                          role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                         <div class="card-body">
                             <h3>{{ offre.libelle }}</h3>
+                            <p>
+                                    {{ offre.typeOffre.libelle }} | {{ offre.prixMin|format_currency('EUR', locale='fr') }} - {{ offre.prixMax|format_currency('EUR', locale='fr') }}
+                            </p>
                             <table>
                                 <thead>
                                 <tr>
                                     <th>Equipe</th>
-                                    <th>Proposition</th>
                                     <th>Type projet</th>
+                                    <th>Proposition</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -32,12 +35,35 @@
                                         {% if proposition.offre.id == offre.id %}
                                             <tr>
                                             <td>{{ proposition.equipe.nom }}</td>
-                                            <td>{{ proposition.prix }} €</td>
                                             {% if proposition.type is not null %}
-                                                <td>{{ proposition.type.libelle }}</td>
+                                                <td
+                                                {% if proposition.type.libelle == offre.typeOffre.libelle %}
+                                                    style="color: green"
+                                                {% else %}
+                                                    style="color: red"
+                                                {% endif %}
+                                                >{{ proposition.type.libelle }}</td>
                                             {% else %}
                                                 <td>Non défini</td>
                                             {% endif %}
+                                        {% if proposition.prix is not null %}
+                                            <td>{{ proposition.prix|format_currency('EUR', locale='fr') }}</td>
+                                        {% else %}
+                                            <td>0 €</td>
+                                        {% endif %}
+                                            <turbo-frame id="state">
+                                                <td><a href="{{ path('app_proposition_state', {'id':proposition.id}) }}">
+                                                    <button class="btn
+                                        {% if proposition.etat == true %}
+                                    btn-success">
+                                                        Refuser
+                                                        {% else %}
+                                                            btn-danger">
+                                                            Accepter
+                                                        {% endif %}
+                                                    </button>
+                                                </a></td>
+                                            </turbo-frame>
                                         {% endif %}
                                     {% endfor %}
                                     </tr>
