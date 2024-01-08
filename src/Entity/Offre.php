@@ -42,7 +42,7 @@ class Offre
     #[ORM\ManyToOne(inversedBy: 'offres')]
     private ?Game $game = null;
 
-    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: BesoinRole::class)]
+    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: BesoinRole::class, cascade: ['persist', 'remove'])]
     private Collection $besoin_role;
 
     // src/Entity/Offre.php
@@ -55,6 +55,9 @@ class Offre
 
     #[ORM\OneToMany(mappedBy: 'offre', targetEntity: Proposition::class)]
     private Collection $propositions;
+
+    #[ORM\Column]
+    private ?int $accompte = null;
 
     public function getTypeOffre(): ?TypeOffre
     {
@@ -259,6 +262,18 @@ class Offre
                 $proposition->setOffre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAccompte(): ?int
+    {
+        return $this->accompte;
+    }
+
+    public function setAccompte(int $accompte): static
+    {
+        $this->accompte = $accompte;
 
         return $this;
     }

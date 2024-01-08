@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Classes\DataUserSession;
+use App\Entity\BesoinRole;
 use App\Entity\Offre;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -12,9 +13,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -56,12 +59,20 @@ class OffreCrudController extends AbstractCrudController
             IntegerField::new('deadline'),
             MoneyField::new('prix_min')->setCurrency('EUR')->setStoredAsCents(false),
             MoneyField::new('prix_max')->setCurrency('EUR')->setStoredAsCents(false),
+            PercentField::new('accompte')->setStoredAsFractional(false),
             AssociationField::new('game')
                 ->autocomplete()
                 ->setCrudController(GameCrudController::class)
                 ->setFormTypeOption('by_reference', true)
                 ->setFormTypeOption('mapped', true),
             BooleanField::new('visible'),
+            CollectionField::new('besoin_role')
+                ->setEntryType(BesoinRoleType::class)
+                ->setFormTypeOptions([
+                    'by_reference' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                ]),
         ];
     }
 }

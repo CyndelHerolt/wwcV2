@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Equipe;
 use App\Entity\Game;
 use App\Entity\Offre;
+use App\Entity\Role;
 use App\Entity\TypeOffre;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -55,5 +56,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Type d\'offres', 'fas fa-list', TypeOffre::class);
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
         yield MenuItem::linkToCrud('Equipes', 'fas fa-users', Equipe::class);
+        yield MenuItem::linkToCrud('Role', 'fas fa-users', Role::class);
     }
 }
