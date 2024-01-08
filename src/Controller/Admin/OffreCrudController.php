@@ -54,8 +54,8 @@ class OffreCrudController extends AbstractCrudController
             TextEditorField::new('description_courte'),
             TextEditorField::new('description_longue'),
             IntegerField::new('deadline'),
-            MoneyField::new('prix_min')->setCurrency('EUR'),
-            MoneyField::new('prix_max')->setCurrency('EUR'),
+            MoneyField::new('prix_min')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('prix_max')->setCurrency('EUR')->setStoredAsCents(false),
             AssociationField::new('game')
                 ->autocomplete()
                 ->setCrudController(GameCrudController::class)

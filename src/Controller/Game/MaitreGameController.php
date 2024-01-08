@@ -41,6 +41,8 @@ class MaitreGameController extends AbstractController
         $gameId = $this->dataUserSession->getGame()->getId();
         $game = $this->gameRepository->find($gameId);
 
+        $maitre = $this->getUser();
+
         if ($game === null) {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
             return $this->redirectToRoute('app_game_choice');
@@ -50,15 +52,16 @@ class MaitreGameController extends AbstractController
             $offres = $this->offreRepository->findBy(['game' => $game]);
             $this->maitrePhase1AController->maitre_phase($game, $offres);
         } elseif ($game->getPhase() === "1b") {
-            $offres = $this->offreRepository->findBy(['game' => $game]);
+            $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game, $offres, $equipes);
+            $this->maitrePhase1BController->index($game, $offres, $equipes, null);
         }
 
         return $this->render('maitre_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
             'equipes' => $equipes ?? null,
+            'maitre' => $maitre ?? null,
         ]);
     }
 

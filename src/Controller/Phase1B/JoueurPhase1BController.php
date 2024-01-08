@@ -6,6 +6,7 @@ use App\Entity\Game;
 use App\Form\PropositionType;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
@@ -14,6 +15,7 @@ class JoueurPhase1BController extends AbstractController
     public function __construct(
         private HubInterface $hub,
         protected PropositionRepository $propositionRepository,
+        private readonly RequestStack $session,
     )
     {
     }
@@ -28,18 +30,20 @@ class JoueurPhase1BController extends AbstractController
         });
 
         // créer un formulaire pour chaque proposition
+        // créer un formulaire pour chaque proposition
         $forms = [];
         foreach ($offres as $offre) {
-            // récupérer la proposition de cette equipe liée à cette offre
-            $proposition = $this->propositionRepository->findOneBy([
-                'equipe' => $this->getUser()->getEquipe(),
-                'offre' => $offre,
-            ]);
-            $forms[$offre->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+            foreach ($offre->getPropositions() as $proposition) {
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+            }
         }
 
         // récupérer toutes les équipes de la game
         $equipes = $game->getEquipes();
+
+        // récupérer l'offre dans la session
+        $offreUpdated = $this->session->getSession()->get('offre');
+        dump($offreUpdated);
 
         // envoyer une mise à jour Mercure pour chaque équipe
         foreach ($equipes as $equipe) {
@@ -50,6 +54,7 @@ class JoueurPhase1BController extends AbstractController
                     'equipe' => $equipe,
                     'offres' => $offres,
                     'forms' => $forms,
+                    'offreUpdated' => $offreUpdated,
                 ]),
                 false
             ));

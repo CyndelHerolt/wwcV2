@@ -17,7 +17,6 @@ class PropositionType extends AbstractType
     {
         $builder
             ->add('prix', MoneyType::class, [
-                'divisor' => 100,
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'Prix',
@@ -25,6 +24,9 @@ class PropositionType extends AbstractType
                 'mapped' => true,
             ])
             ->add('type', EntityType::class, [
+                'attr' => [
+                    'class' => 'form-select',
+                ],
                 'class' => TypeOffre::class,
                 'choice_label' => 'libelle',
                 'mapped' => true,
