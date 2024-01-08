@@ -50,7 +50,7 @@ class MaitreGameController extends AbstractController
             $offres = $this->offreRepository->findBy(['game' => $game]);
             $this->maitrePhase1AController->maitre_phase($game, $offres);
         } elseif ($game->getPhase() === "1b") {
-            $offres = $this->offreRepository->findBy(['game' => $game]);
+            $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
             $this->maitrePhase1BController->index($game, $offres, $equipes);
         }

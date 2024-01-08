@@ -18,7 +18,6 @@
                          role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                         <div class="card-body">
                             <h3>{{ offre.libelle }}</h3>
-
                             <table>
                                 <thead>
                                 <tr>
@@ -29,16 +28,18 @@
                                 </thead>
                                 <tbody>
                                 {% for equipe in equipes %}
-                                    <tr>
-                                            {% if equipe.propositions[offre.id] is defined %}
-                                        <td>{{ equipe.nom }}</td>
-                                        <td>{{ equipe.propositions[offre.id].prix }}</td>
-                                        {% if equipe.propositions[offre.id].type is not null %}
-                                            <td>{{ equipe.propositions[offre.id].type.libelle }}</td>
-                                        {% else %}
-                                            <td>Non défini</td>
+                                    {% for proposition in equipe.propositions %}
+                                        {% if proposition.offre.id == offre.id %}
+                                            <tr>
+                                            <td>{{ proposition.equipe.nom }}</td>
+                                            <td>{{ proposition.prix }} €</td>
+                                            {% if proposition.type is not null %}
+                                                <td>{{ proposition.type.libelle }}</td>
+                                            {% else %}
+                                                <td>Non défini</td>
+                                            {% endif %}
                                         {% endif %}
-                                        {% endif %}
+                                    {% endfor %}
                                     </tr>
                                 {% endfor %}
                                 </tbody>
