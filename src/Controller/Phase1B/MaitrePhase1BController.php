@@ -17,7 +17,6 @@ class MaitrePhase1BController extends AbstractController
     public function __construct(
         private HubInterface   $hub,
         private UserRepository $userRepository,
-        private PropositionRepository $propositionRepository,
         private OffreRepository $offreRepository,
     )
     {
@@ -30,6 +29,8 @@ class MaitrePhase1BController extends AbstractController
 
         if ($offreId !== null) {
             $offreUpdated = $this->offreRepository->find($offreId);
+        } else {
+            $offreUpdated = $offres[0] ?? null;
         }
 
         foreach ($maitres as $maitre) {

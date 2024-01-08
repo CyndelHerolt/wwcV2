@@ -43,7 +43,6 @@ class JoueurPhase1BController extends AbstractController
 
         // récupérer l'offre dans la session
         $offreUpdated = $this->session->getSession()->get('offre');
-        dump($offreUpdated);
 
         // envoyer une mise à jour Mercure pour chaque équipe
         foreach ($equipes as $equipe) {
@@ -54,7 +53,6 @@ class JoueurPhase1BController extends AbstractController
                     'equipe' => $equipe,
                     'offres' => $offres,
                     'forms' => $forms,
-                    'offreUpdated' => $offreUpdated,
                 ]),
                 false
             ));
