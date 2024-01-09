@@ -26,7 +26,7 @@ class JoueurPhase1AController extends AbstractController
         foreach ($equipes as $equipe) {
             $this->hub->publish(new Update(
                 'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
-                $this->renderView('phase1_a/joueur_phase1a.stream.html.twig', [
+                $this->renderView('phase1a/joueur_phase1a.stream.html.twig', [
                     'game' => $game,
                     'equipe' => $equipe,
                 ]),

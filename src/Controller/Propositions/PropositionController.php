@@ -38,6 +38,7 @@ class PropositionController extends AbstractController
     {
         $offre = $this->offreRepository->findOneBy(['id' => $offreId]);
         $equipe = $this->equipeRepository->findOneBy(['id' => $equipeId]);
+        $game = $offre->getGame();
 
         $proposition = new Proposition();
         $proposition->setOffre($offre);
@@ -55,7 +56,7 @@ class PropositionController extends AbstractController
         $this->session->getSession()->set('offre', $proposition->getOffre()->getId());
 
         // créer un formulaire pour la proposition
-        $form = $this->createForm(PropositionType::class, $proposition);
+        $form = $this->createForm(PropositionType::class, $proposition, ['game'=>$game]);
 
         $this->hub->publish(new Update(
             'game-joueur/' . $equipeId . '/' . $offreId,
@@ -63,11 +64,12 @@ class PropositionController extends AbstractController
                 'proposition' => $proposition,
                 'form' => $form->createView(),
                 'offre' => $offre,
+                'game' => $game,
             ]),
             false
         ));
 
-        $game = $this->getUser()->getEquipe()->getGame();
+        $game = $proposition->getEquipe()->getGame();
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
         $equipes = $this->equipeRepository->findBy(['game' => $game]);
         if($this->session->getSession()->get('offre') !== null) {
@@ -81,6 +83,7 @@ class PropositionController extends AbstractController
             'proposition' => $proposition,
             'form' => $form->createView(),
             'offre' => $offre,
+            'game' => $game,
         ]);
     }
 
@@ -88,8 +91,9 @@ class PropositionController extends AbstractController
     public function update(?int $id, Request $request): Response
     {
         $proposition = $this->propositionRepository->find($id);
+        $game = $proposition->getEquipe()->getGame();
 
-        $form = $this->createForm(PropositionType::class, $proposition);
+        $form = $this->createForm(PropositionType::class, $proposition, ['game'=>$game]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // The $proposition object now contains the submitted data
@@ -98,6 +102,9 @@ class PropositionController extends AbstractController
             $this->propositionRepository->save($proposition);
             // ajouter l'offre à la session
             $this->session->getSession()->set('offre', $proposition->getOffre()->getId());
+
+            // ajouter un message flash a la session
+            $this->addFlash('success', 'Proposition mise à jour');
 
             // actualiser le contenu côté mj
             $game = $this->getUser()->getEquipe()->getGame();
@@ -120,6 +127,7 @@ class PropositionController extends AbstractController
             'offre' => $proposition->getOffre(),
             'proposition' => $proposition,
             'form' => $form->createView(),
+            'game' => $game,
         ]);
     }
 
@@ -127,6 +135,7 @@ class PropositionController extends AbstractController
     public function delete(?int $id): Response
     {
         $proposition = $this->propositionRepository->find($id);
+        $game = $proposition->getEquipe()->getGame();
 
         $offre = $proposition->getOffre();
         $equipe = $proposition->getEquipe();
@@ -136,6 +145,7 @@ class PropositionController extends AbstractController
         return $this->render('proposition/empty_form.stream.html.twig', [
             'offre' => $offre,
             'equipe' => $equipe,
+            'game' => $game,
         ]);
     }
 

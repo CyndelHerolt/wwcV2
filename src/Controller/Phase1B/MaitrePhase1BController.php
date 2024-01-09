@@ -36,7 +36,7 @@ class MaitrePhase1BController extends AbstractController
         foreach ($maitres as $maitre) {
             $this->hub->publish(new Update(
                 'game-maitre/' . $maitre->getId(),
-                $this->renderView('phase1_b/maitre_phase1b.stream.html.twig', [
+                $this->renderView('phase1b/maitre_phase1b.stream.html.twig', [
                     'game' => $game,
                     'equipes' => $equipes,
                     'offres' => $offres,

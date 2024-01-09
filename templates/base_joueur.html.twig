@@ -20,13 +20,13 @@
 {% endblock %}
 {% block body %}
 {% endblock %}
-    <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
-        {% if game.pause == true %}
-        <i class="fa-duotone fa-circle-pause fa-2x" style="color: orange"></i>
-        {% else %}
-        <i class="fa-duotone fa-circle-play fa-2x" style="color: green"></i>
-        {% endif %}
-        <span>13:12</span>
-    </div>
+{#    <div class="pause" style="border: solid 10px {{ equipe.couleur }}"#}
+{#         id="phase-joueur-footer-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/pause/equipe'~equipe.id) }}>#}
+{#        {% if game.pause == true %}#}
+{#        <i class="fa-duotone fa-circle-pause fa-3x" style="color: orange"></i>#}
+{#        {% else %}#}
+{#        <i class="fa-duotone fa-circle-play fa-3x" style="color: green"></i>#}
+{#        {% endif %}#}
+{#    </div>#}
 </body>
 </html>

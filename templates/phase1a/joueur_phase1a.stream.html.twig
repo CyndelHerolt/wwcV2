@@ -99,6 +99,13 @@
                     </tbody>
                 </table>
             </div>
+            <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
+                {% if game.pause == true %}
+                    <i class="fa-duotone fa-circle-pause fa-3x" style="color: orange"></i>
+                {% else %}
+                    <i class="fa-duotone fa-circle-play fa-3x" style="color: green"></i>
+                {% endif %}
+            </div>
         </div>
     </template>
 </turbo-stream>

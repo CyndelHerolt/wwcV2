@@ -1,5 +1,13 @@
 <turbo-frame id="proposition-frame-{{ offre.id }}">
-    <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
-        <button class="btn btn-primary">Répondre à cette offre</button>
-    </a>
+    {% if game.pause == true %}
+        <button class="btn btn-primary disabled">
+            Répondre à cette offre
+        </button>
+    {% else %}
+        <a href="{{ path('app_proposition_create', {'offreId':offre.id, 'equipeId':equipe.id}) }}">
+            <button class="btn btn-primary">
+                Répondre à cette offre
+            </button>
+        </a>
+    {% endif %}
 </turbo-frame>

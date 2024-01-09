@@ -16,6 +16,8 @@ class PropositionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $game = $options['game'];
+
         $builder
             ->add('prix', MoneyType::class, [
                 'attr' => [
@@ -34,19 +36,24 @@ class PropositionType extends AbstractType
             ])
             ->add('estimationRoles', CollectionType::class, [
                 'entry_type' => EstimationRoleType::class,
-                'entry_options' => ['label' => false],
+                'entry_options' => [
+                    'label' => false,
+                    'attr' => ['disabled' => $game->isPause(true)],
+                    'game' => $game,
+                ],
                 'allow_add' => false,
                 'allow_delete' => false,
                 'by_reference' => false,
                 'mapped' => true,
-            ])
-            ;
+                'label' => 'Estimation du nombre de jours mobilisés pour chaque rôle',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Proposition::class,
+            'game' => null,
         ]);
     }
 }

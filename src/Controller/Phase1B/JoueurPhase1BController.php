@@ -24,6 +24,7 @@ class JoueurPhase1BController extends AbstractController
 
     public function index(
         ?Game $game,
+        ?int $offreId
     ): void
     {
         // récupérer toutes les offres de la game avec visible = true
@@ -36,21 +37,24 @@ class JoueurPhase1BController extends AbstractController
         $forms = [];
         foreach ($offres as $offre) {
             foreach ($offre->getPropositions() as $proposition) {
-                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition, ['game'=>$game])->createView();
             }
         }
 
         // récupérer toutes les équipes de la game
         $equipes = $game->getEquipes();
 
-        // récupérer l'offre dans la session
-        $offreUpdated = $this->offreRepository->find($this->session->getSession()->get('offre'));
+        if ($offreId !== null) {
+            $offreUpdated = $this->offreRepository->find($offreId);
+        } else {
+            $offreUpdated = $offres[0] ?? null;
+        }
 
         // envoyer une mise à jour Mercure pour chaque équipe
         foreach ($equipes as $equipe) {
             $this->hub->publish(new Update(
                 'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
-                $this->renderView('phase1_b/joueur_phase1b.stream.html.twig', [
+                $this->renderView('phase1b/joueur_phase1b.stream.html.twig', [
                     'game' => $game,
                     'equipe' => $equipe,
                     'offres' => $offres,
