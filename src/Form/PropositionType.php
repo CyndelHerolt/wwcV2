@@ -6,6 +6,7 @@ use App\Entity\Proposition;
 use App\Entity\TypeOffre;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +30,14 @@ class PropositionType extends AbstractType
                 ],
                 'class' => TypeOffre::class,
                 'choice_label' => 'libelle',
+                'mapped' => true,
+            ])
+            ->add('estimationRoles', CollectionType::class, [
+                'entry_type' => EstimationRoleType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => false,
+                'allow_delete' => false,
+                'by_reference' => false,
                 'mapped' => true,
             ])
             ;

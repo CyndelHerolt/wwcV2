@@ -6,7 +6,7 @@
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 {% for offre in offres %}
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {% if offreUpdated is defined and offreUpdated is not null and offreUpdated.id == offre.id %}active{% elseif offreUpdated is not defined and loop.first %}active{% endif %}"
+                        <a class="nav-link {% if offreUpdated is defined and offreUpdated == offre %}active{% elseif offreUpdated is not defined and loop.first %}active{% endif %}"
                            id="offre-{{ offre.id }}-tab"
                            data-bs-toggle="tab" href="#offre-{{ offre.id }}" role="tab"
                            aria-controls="offre-{{ offre.id }}"
@@ -17,12 +17,26 @@
 
             <div class="tab-content" id="myTabContent">
                 {% for offre in offres %}
-                    <div class="card tab-pane fade {% if offreUpdated is defined and offreUpdated is not null and offreUpdated.id == offre.id %}show active{% elseif offreUpdated is not defined and loop.first %}show active{% endif %}"
+                    <div class="card tab-pane fade {% if offreUpdated is defined and offreUpdated == offre %}show active{% elseif offreUpdated is not defined and loop.first %}show active{% endif %}"
                          id="offre-{{ offre.id }}"
                          role="tabpanel" aria-labelledby="offre-{{ offre.id }}-tab">
                         <div class="card-body">
                             <h3>{{ offre.libelle }}</h3>
-                            <p>{{ offre.descriptionCourte|raw }}</p>
+                            <div class="d-inline-flex gap-1">
+                                <em>{{ offre.descriptionCourte|raw }}</em>
+                                <em class="link-primary" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseExample" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                    En savoir plus
+                                </em>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                                <div class="card card-body">
+                                    {{ offre.descriptionLongue|raw }}
+                                </div>
+                            </div>
+
+                            <hr>
 
                             <ul>
                                 {% for besoin in offre.besoinRole %}
@@ -37,10 +51,10 @@
                             <small>Accompte versé à la signature : {{ offre.accompte }} %</small>
                             <ul>
                                 <li>
-                                    <i class="fa-solid fa-arrow-down"></i> {{ offre.prixMin|format_currency('EUR', locale='fr') }}
+                                    <i class="fa-solid fa-arrow-down" style="color: red"></i> {{ offre.prixMin|format_currency('EUR', locale='fr') }}
                                 </li>
                                 <li>
-                                    <i class="fa-solid fa-arrow-up"></i> {{ offre.prixMax|format_currency('EUR', locale='fr') }}
+                                    <i class="fa-solid fa-arrow-up" style="color: green"></i> {{ offre.prixMax|format_currency('EUR', locale='fr') }}
                                 </li>
                             </ul>
 
@@ -60,6 +74,7 @@
                                             {{ form_start(forms[offre.id][proposition.equipe.id], {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
                                             {{ form_row(forms[offre.id][proposition.equipe.id].type) }}
                                             {{ form_row(forms[offre.id][proposition.equipe.id].prix) }}
+                                            {{ form_row(forms[offre.id][proposition.equipe.id].estimationRoles) }}
                                             <button class="btn btn-primary" type="submit">Modifier la proposition
                                             </button>
                                             {{ form_end(forms[offre.id][proposition.equipe.id]) }}

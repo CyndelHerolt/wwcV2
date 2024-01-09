@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Form;
 
 use App\Entity\BesoinRole;
 use App\Entity\Role;

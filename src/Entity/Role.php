@@ -23,9 +23,13 @@ class Role
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: BesoinRole::class)]
     private Collection $besoinRoles;
 
+    #[ORM\OneToMany(mappedBy: 'role', targetEntity: EstimationRole::class)]
+    private Collection $estimationRoles;
+
     public function __construct()
     {
         $this->besoinRoles = new ArrayCollection();
+        $this->estimationRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -69,6 +73,36 @@ class Role
             // set the owning side to null (unless already changed)
             if ($besoinRole->getRole() === $this) {
                 $besoinRole->setRole(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EstimationRole>
+     */
+    public function getEstimationRoles(): Collection
+    {
+        return $this->estimationRoles;
+    }
+
+    public function addEstimationRole(EstimationRole $estimationRole): static
+    {
+        if (!$this->estimationRoles->contains($estimationRole)) {
+            $this->estimationRoles->add($estimationRole);
+            $estimationRole->setRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEstimationRole(EstimationRole $estimationRole): static
+    {
+        if ($this->estimationRoles->removeElement($estimationRole)) {
+            // set the owning side to null (unless already changed)
+            if ($estimationRole->getRole() === $this) {
+                $estimationRole->setRole(null);
             }
         }
 

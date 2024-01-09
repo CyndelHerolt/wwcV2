@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Propositions;
 
 use App\Controller\Phase1B\MaitrePhase1BController;
+use App\Entity\EstimationRole;
 use App\Entity\Proposition;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
+use App\Repository\EstimationRoleRepository;
 use App\Repository\OffreRepository;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,6 +28,7 @@ class PropositionController extends AbstractController
         private EquipeRepository        $equipeRepository,
         private MaitrePhase1BController $maitrePhase1BController,
         private readonly RequestStack   $session,
+        private EstimationRoleRepository $estimationRoleRepository,
     )
     {
     }
@@ -39,7 +42,17 @@ class PropositionController extends AbstractController
         $proposition = new Proposition();
         $proposition->setOffre($offre);
         $proposition->setEquipe($equipe);
+        // pour chaque role de l'offre, créer une estimationRole
+        foreach ($offre->getBesoinRole() as $besoinRole) {
+            $estimationRole = new EstimationRole();
+            $estimationRole->setRole($besoinRole->getRole());
+            $estimationRole->setNbJours(0);
+            // Ajoutez l'EstimationRole à la Proposition
+            $proposition->addEstimationRole($estimationRole);
+        }
         $this->propositionRepository->save($proposition);
+        // ajouter l'offre à la session
+        $this->session->getSession()->set('offre', $proposition->getOffre()->getId());
 
         // créer un formulaire pour la proposition
         $form = $this->createForm(PropositionType::class, $proposition);
@@ -57,7 +70,12 @@ class PropositionController extends AbstractController
         $game = $this->getUser()->getEquipe()->getGame();
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
         $equipes = $this->equipeRepository->findBy(['game' => $game]);
-        $this->maitrePhase1BController->index($game, $offres, $equipes, null);
+        if($this->session->getSession()->get('offre') !== null) {
+            $offreUpdated = $this->session->getSession()->get('offre');
+        } else {
+            $offreUpdated = null;
+        }
+        $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
 
         return $this->render('proposition/form.stream.html.twig', [
             'proposition' => $proposition,
@@ -79,12 +97,18 @@ class PropositionController extends AbstractController
 
             $this->propositionRepository->save($proposition);
             // ajouter l'offre à la session
-            $this->session->getSession()->set('offre', $proposition->getOffre());
+            $this->session->getSession()->set('offre', $proposition->getOffre()->getId());
 
+            // actualiser le contenu côté mj
             $game = $this->getUser()->getEquipe()->getGame();
             $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game, $offres, $equipes, $this->session->getSession()->get('offre')->getId());
+            if($this->session->getSession()->get('offre') !== null) {
+                $offreUpdated = $this->session->getSession()->get('offre');
+            } else {
+                $offreUpdated = null;
+            }
+            $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
 
 
             // Redirect to the game page or another appropriate page
