@@ -5,9 +5,11 @@ namespace App\Controller\Game;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase2A\JoueurPhase2AController;
 use App\Form\PropositionType;
+use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -20,6 +22,8 @@ class JoueurGameController extends AbstractController
         private JoueurPhase1BController $joueurPhase1BController,
         private JoueurPhase2AController $joueurPhase1CController,
         private OffreRepository         $offreRepository,
+        private GameRepository          $gameRepository,
+        private readonly RequestStack   $session,
     )
     {
     }
@@ -27,6 +31,8 @@ class JoueurGameController extends AbstractController
     #[Route('/', name: 'app_joueur_game', methods: ['GET', 'POST'])]
     public function index(Request $request): Response
     {
+        $this->session->getSession()->set('game', $this->getUser()->getEquipe()->getGame());
+
         $game = $this->getUser()->getEquipe()->getGame();
 //        $equipe = $this->getUser()->getEquipe();
 
@@ -36,7 +42,7 @@ class JoueurGameController extends AbstractController
         $forms = [];
         foreach ($offres as $offre) {
             foreach ($offre->getPropositions() as $proposition) {
-                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition)->createView();
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition, ['game'=>$game])->createView();
             }
         }
 
@@ -46,7 +52,12 @@ class JoueurGameController extends AbstractController
         }
 
         if ($game->getPhase() === '1b') {
-            $this->joueurPhase1BController->index($game);
+            if($this->session->getSession()->get('offre') !== null) {
+                $offreUpdated = $this->session->getSession()->get('offre');
+            } else {
+                $offreUpdated = null;
+            }
+            $this->joueurPhase1BController->index($game, $offreUpdated);
         }
         elseif ($game->getPhase() === '2a') {
 

@@ -4,8 +4,6 @@
 
 {% block body %}
     <section>
-        <h1>Game {{ game.id }}</h1>
-
         <turbo-frame id="pause">
             <a href="{{ path('app_maitre_game_pause', {'id':game.id}) }}">
                 <button class="btn
@@ -48,9 +46,9 @@
 
         <div id="phase" {{ turbo_stream_listen('game-maitre/'~app.user.id) }}>
             {% if game.phase == '1a' %}
-                {{ include('phase1_a/maitre_phase1a.stream.html.twig') }}
+                {{ include('phase1a/maitre_phase1a.stream.html.twig') }}
             {% elseif game.phase == '1b' %}
-                {{ include('phase1_b/maitre_phase1b.stream.html.twig') }}
+                {{ include('phase1b/maitre_phase1b.stream.html.twig') }}
             {% endif %}
         </div>
     </section>

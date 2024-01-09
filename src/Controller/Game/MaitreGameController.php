@@ -7,6 +7,7 @@ use App\Controller\Phase1A\JoueurPhase1AController;
 use App\Controller\Phase1A\MaitrePhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
+use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
@@ -14,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -32,7 +34,7 @@ class MaitreGameController extends AbstractController
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
         private HubInterface            $hub,
-        private readonly RequestStack            $session,
+        private readonly RequestStack   $session,
     )
     {
     }
@@ -56,7 +58,7 @@ class MaitreGameController extends AbstractController
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            if($this->session->getSession()->get('offre') !== null) {
+            if ($this->session->getSession()->get('offre') !== null) {
                 $offreUpdated = $this->session->getSession()->get('offre');
             } else {
                 $offreUpdated = null;
@@ -82,9 +84,15 @@ class MaitreGameController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
+        if ($this->session->getSession()->get('offre') !== null) {
+            $offreUpdated = $this->session->getSession()->get('offre');
+        } else {
+            $offreUpdated = null;
+        }
+
         if ($game->getPhase() === "1a") {
             $game->setPhase("1b");
-            $this->joueurPhase1BController->index($game);
+            $this->joueurPhase1BController->index($game, $offreUpdated);
         } elseif ($game->getPhase() === "1b") {
             $game->setPhase("2a");
         }
@@ -103,25 +111,68 @@ class MaitreGameController extends AbstractController
             return $this->redirectToRoute('admin');
         }
 
+        if ($this->session->getSession()->get('offre') !== null) {
+            $offreUpdated = $this->session->getSession()->get('offre');
+        } else {
+            $offreUpdated = null;
+        }
+
         if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
             $this->joueurPhase1AController->index($game);
         } elseif ($game->getPhase() === "2a") {
             $game->setPhase("1b");
-            $this->joueurPhase1BController->index($game);
+            $this->joueurPhase1BController->index($game, $offreUpdated);
         }
         $this->gameRepository->save($game, true);
 
         return $this->redirectToRoute('app_maitre_game');
     }
 
-    //todo: publier une update mercure pour passer le jeu en pause côté joueurs
     #[Route('/pause/{id}', name: 'app_maitre_game_pause')]
     public function pause(?int $id)
     {
         $game = $this->gameRepository->find($id);
         $game->setPause(!$game->isPause());
+        $phase = $game->getPhase();
+        $equipes = $this->equipeRepository->findBy(['game' => $game]);
+
+        // récupérer toutes les offres de la game avec visible = true
+        $offres = $game->getOffres()->filter(function ($offre) {
+            return $offre->isVisible() === true;
+        });
+
+        // créer un formulaire pour chaque proposition
+        // créer un formulaire pour chaque proposition
+        $forms = [];
+        foreach ($offres as $offre) {
+            foreach ($offre->getPropositions() as $proposition) {
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition, ['game'=>$game])->createView();
+            }
+        }
+
+        if ($this->session->getSession()->get('offre') !== null) {
+            $offre = $this->offreRepository->find($this->session->getSession()->get('offre'));
+            $offreUpdated = $offre;
+        } else {
+            $offreUpdated = null;
+        }
+
         $this->gameRepository->save($game);
+
+        foreach ($equipes as $equipe) {
+            $this->hub->publish(new Update(
+                'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
+                $this->renderView('phase' . $phase . '/joueur_phase' . $phase . '.stream.html.twig', [
+                    'game' => $game,
+                    'equipe' => $equipe,
+                    'offres' => $offres,
+                    'forms' => $forms,
+                    'offreUpdated' => $offreUpdated,
+                ]),
+                false
+            ));
+        }
 
         return $this->redirectToRoute('app_maitre_game');
     }
