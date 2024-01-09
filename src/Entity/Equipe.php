@@ -155,12 +155,24 @@ class Equipe
     #[ORM\ManyToOne(inversedBy: 'equipes')]
     private ?Game $game = null;
 
+    #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Projet::class)]
+    private Collection $projets;
+
+    #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: CapaciteRole::class)]
+    private Collection $capaciteRoles;
+
+    #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Profil::class)]
+    private Collection $profils;
+
     public function __construct()
     {
         $this->personnels = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->offres = new ArrayCollection();
         $this->propositions = new ArrayCollection();
+        $this->projets = new ArrayCollection();
+        $this->capaciteRoles = new ArrayCollection();
+        $this->profils = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -782,6 +794,96 @@ class Equipe
     public function setGame(?Game $game): static
     {
         $this->game = $game;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Projet>
+     */
+    public function getProjets(): Collection
+    {
+        return $this->projets;
+    }
+
+    public function addProjet(Projet $projet): static
+    {
+        if (!$this->projets->contains($projet)) {
+            $this->projets->add($projet);
+            $projet->setEquipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProjet(Projet $projet): static
+    {
+        if ($this->projets->removeElement($projet)) {
+            // set the owning side to null (unless already changed)
+            if ($projet->getEquipe() === $this) {
+                $projet->setEquipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CapaciteRole>
+     */
+    public function getCapaciteRoles(): Collection
+    {
+        return $this->capaciteRoles;
+    }
+
+    public function addCapaciteRole(CapaciteRole $capaciteRole): static
+    {
+        if (!$this->capaciteRoles->contains($capaciteRole)) {
+            $this->capaciteRoles->add($capaciteRole);
+            $capaciteRole->setEquipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCapaciteRole(CapaciteRole $capaciteRole): static
+    {
+        if ($this->capaciteRoles->removeElement($capaciteRole)) {
+            // set the owning side to null (unless already changed)
+            if ($capaciteRole->getEquipe() === $this) {
+                $capaciteRole->setEquipe(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Profil>
+     */
+    public function getProfils(): Collection
+    {
+        return $this->profils;
+    }
+
+    public function addProfil(Profil $profil): static
+    {
+        if (!$this->profils->contains($profil)) {
+            $this->profils->add($profil);
+            $profil->setEquipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProfil(Profil $profil): static
+    {
+        if ($this->profils->removeElement($profil)) {
+            // set the owning side to null (unless already changed)
+            if ($profil->getEquipe() === $this) {
+                $profil->setEquipe(null);
+            }
+        }
 
         return $this;
     }

@@ -142,6 +142,17 @@ class PropositionController extends AbstractController
 
         $this->propositionRepository->remove($proposition);
 
+        // actualiser le contenu côté mj
+        $game = $this->getUser()->getEquipe()->getGame();
+        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+        $equipes = $this->equipeRepository->findBy(['game' => $game]);
+        if($this->session->getSession()->get('offre') !== null) {
+            $offreUpdated = $this->session->getSession()->get('offre');
+        } else {
+            $offreUpdated = null;
+        }
+        $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
+
         return $this->render('proposition/empty_form.stream.html.twig', [
             'offre' => $offre,
             'equipe' => $equipe,
