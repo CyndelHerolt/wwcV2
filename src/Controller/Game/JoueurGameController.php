@@ -3,12 +3,13 @@
 namespace App\Controller\Game;
 
 use App\Controller\Phase1B\JoueurPhase1BController;
+use App\Controller\Phase2A\JoueurPhase2AController;
 use App\Form\PropositionType;
 use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/joueur')]
@@ -17,7 +18,8 @@ class JoueurGameController extends AbstractController
 {
     public function __construct(
         private JoueurPhase1BController $joueurPhase1BController,
-        private OffreRepository $offreRepository,
+        private JoueurPhase2AController $joueurPhase1CController,
+        private OffreRepository         $offreRepository,
     )
     {
     }
@@ -45,6 +47,9 @@ class JoueurGameController extends AbstractController
 
         if ($game->getPhase() === '1b') {
             $this->joueurPhase1BController->index($game);
+        }
+        elseif ($game->getPhase() === '2a') {
+
         }
 
         return $this->render('joueur_game/index.html.twig', [

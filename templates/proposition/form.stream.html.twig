@@ -3,9 +3,11 @@
         <button class="btn btn-danger">Annuler la proposition</button>
     </a>
 
-{{ form_start(form, {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
+    {{ form_start(form, {'method': 'POST', 'action': path('app_proposition_update', {'id':proposition.id})}) }}
     {{ form_row(form.type) }}
     {{ form_row(form.prix) }}
+    {{ form_row(form.estimationRoles) }}
+
     <button class="btn btn-primary" type="submit">Modifier la proposition</button>
-{{ form_end(form) }}
+    {{ form_end(form) }}
 </turbo-frame>

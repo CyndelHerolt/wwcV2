@@ -24,6 +24,12 @@ class BesoinRole
     #[ORM\ManyToOne(inversedBy: 'besoin_role')]
     private ?Offre $offre = null;
 
+    #[ORM\Column]
+    private ?int $nb_jours_estime_min = null;
+
+    #[ORM\Column]
+    private ?int $nb_jours_estime_max = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +67,30 @@ class BesoinRole
     public function setOffre(?Offre $offre): static
     {
         $this->offre = $offre;
+
+        return $this;
+    }
+
+    public function getNbJoursEstimeMin(): ?int
+    {
+        return $this->nb_jours_estime_min;
+    }
+
+    public function setNbJoursEstimeMin(int $nb_jours_estime_min): static
+    {
+        $this->nb_jours_estime_min = $nb_jours_estime_min;
+
+        return $this;
+    }
+
+    public function getNbJoursEstimeMax(): ?int
+    {
+        return $this->nb_jours_estime_max;
+    }
+
+    public function setNbJoursEstimeMax(int $nb_jours_estime_max): static
+    {
+        $this->nb_jours_estime_max = $nb_jours_estime_max;
 
         return $this;
     }

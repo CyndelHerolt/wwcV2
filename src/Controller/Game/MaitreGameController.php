@@ -11,6 +11,7 @@ use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -31,6 +32,7 @@ class MaitreGameController extends AbstractController
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
         private HubInterface            $hub,
+        private readonly RequestStack            $session,
     )
     {
     }
@@ -54,7 +56,12 @@ class MaitreGameController extends AbstractController
         } elseif ($game->getPhase() === "1b") {
             $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
             $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            $this->maitrePhase1BController->index($game, $offres, $equipes, null);
+            if($this->session->getSession()->get('offre') !== null) {
+                $offreUpdated = $this->session->getSession()->get('offre');
+            } else {
+                $offreUpdated = null;
+            }
+            $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
         }
 
         return $this->render('maitre_game/index.html.twig', [
@@ -79,7 +86,7 @@ class MaitreGameController extends AbstractController
             $game->setPhase("1b");
             $this->joueurPhase1BController->index($game);
         } elseif ($game->getPhase() === "1b") {
-            $game->setPhase("1c");
+            $game->setPhase("2a");
         }
         $this->gameRepository->save($game, true);
 
@@ -99,7 +106,7 @@ class MaitreGameController extends AbstractController
         if ($game->getPhase() === "1b") {
             $game->setPhase("1a");
             $this->joueurPhase1AController->index($game);
-        } elseif ($game->getPhase() === "1c") {
+        } elseif ($game->getPhase() === "2a") {
             $game->setPhase("1b");
             $this->joueurPhase1BController->index($game);
         }
