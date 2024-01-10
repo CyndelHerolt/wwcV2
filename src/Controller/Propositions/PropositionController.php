@@ -117,12 +117,9 @@ class PropositionController extends AbstractController
             }
             $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
 
-
-            // Redirect to the game page or another appropriate page
             return $this->redirectToRoute('app_joueur_game');
         }
 
-        // If the form is not submitted or not valid, re-display the form
         return $this->render('proposition/form.stream.html.twig', [
             'offre' => $proposition->getOffre(),
             'proposition' => $proposition,

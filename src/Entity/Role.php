@@ -48,6 +48,9 @@ class Role
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: AssigneRole::class)]
     private Collection $assigneRoles;
 
+    #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'roles', cascade: ["persist"])]
+    private Collection $game;
+
 
     public function __construct()
     {
@@ -56,6 +59,7 @@ class Role
         $this->profils = new ArrayCollection();
         $this->capaciteRoles = new ArrayCollection();
         $this->assigneRoles = new ArrayCollection();
+        $this->game = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -274,6 +278,30 @@ class Role
                 $assigneRole->setRole(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Game>
+     */
+    public function getGame(): Collection
+    {
+        return $this->game;
+    }
+
+    public function addGame(Game $game): static
+    {
+        if (!$this->game->contains($game)) {
+            $this->game->add($game);
+        }
+
+        return $this;
+    }
+
+    public function removeGame(Game $game): static
+    {
+        $this->game->removeElement($game);
 
         return $this;
     }

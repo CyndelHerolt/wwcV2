@@ -21,7 +21,7 @@ class AssigneRole
     #[ORM\ManyToOne(inversedBy: 'assigneRoles')]
     private ?Role $role = null;
 
-    #[ORM\ManyToOne(inversedBy: 'assigneRoles')]
+    #[ORM\ManyToOne(inversedBy: 'assigneRoles', cascade: ['persist', 'remove'])]
     private ?Projet $projet = null;
 
     public function getId(): ?int

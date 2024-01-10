@@ -4,11 +4,14 @@ namespace App\Controller\Admin;
 
 use App\Classes\DataUserSession;
 use App\Entity\Game;
+use App\Entity\Profil;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
@@ -32,7 +35,6 @@ class GameCrudController extends AbstractCrudController
 
         $game = $this->dataUserSession->getGame();
 
-        // Ajoutez votre condition ici
         $queryBuilder->andWhere('entity.id = :id')
             ->setParameter('id', $game->getId());
 
@@ -46,36 +48,46 @@ class GameCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield FormField::addPanel('Général')->setIcon('fa fa-gamepad');
-        yield TextField::new('nom_partie');
-        yield BooleanField::new('active');
-        yield IntegerField::new('nb_equipes');
-        yield BooleanField::new('pause');
-        yield IntegerField::new('periode');
-        yield TextField::new('phase');
-        yield TextField::new('time_next');
+        return [
+            FormField::addPanel('Général')->setIcon('fa fa-gamepad'),
+            TextField::new('nom_partie'),
+            AssociationField::new('equipes')
+                ->autocomplete()
+                ->setCrudController(EquipeCrudController::class)
+                ->setFormTypeOption('by_reference', false)
+                ->setFormTypeOption('multiple', true),
+            AssociationField::new('roles')
+                ->autocomplete()
+                ->setCrudController(RoleCrudController::class)
+                ->setFormTypeOption('by_reference', false)
+                ->setFormTypeOption('multiple', true),
+            BooleanField::new('active'),
+            IntegerField::new('nb_equipes'),
+            BooleanField::new('pause'),
+            IntegerField::new('periode'),
+            TextField::new('phase'),
+            TextField::new('time_next'),
 
-        yield FormField::addPanel('Paramétrage')->setIcon('fa fa-tools');
-        yield IntegerField::new('nb_jours_mois');
-        yield MoneyField::new('init_actif_dispo')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('init_tresorerie_decaissement')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('init_actif_materiel')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('montant_impot')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('location_materiel')->setCurrency('EUR')->setStoredAsCents(false);
-        yield IntegerField::new('init_materiel');
+            FormField::addPanel('Paramétrage')->setIcon('fa fa-tools'),
+            IntegerField::new('nb_jours_mois'),
+            MoneyField::new('init_actif_dispo')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('init_tresorerie_decaissement')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('init_actif_materiel')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('montant_impot')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('location_materiel')->setCurrency('EUR')->setStoredAsCents(false),
+            IntegerField::new('init_materiel'),
 
-        yield NumberField::new('coeff_charges_patronales');
-        yield NumberField::new('coeff_charges_salariales');
-        yield NumberField::new('coeff_electricite');
-        yield NumberField::new('coeff_telephonie');
-        yield NumberField::new('coeff_deplacement');
-        yield NumberField::new('coeff_autre');
-        yield NumberField::new('taux_decouvert');
-        yield NumberField::new('taux_interet');
+            NumberField::new('coeff_charges_patronales'),
+            NumberField::new('coeff_charges_salariales'),
+            NumberField::new('coeff_electricite'),
+            NumberField::new('coeff_telephonie'),
+            NumberField::new('coeff_deplacement'),
+            NumberField::new('coeff_autre'),
+            NumberField::new('taux_decouvert'),
+            NumberField::new('taux_interet'),
 
-        yield MoneyField::new('penalite_machine')->setCurrency('EUR')->setStoredAsCents(false);
-        yield MoneyField::new('penalite_surface')->setCurrency('EUR')->setStoredAsCents(false);
-
-
+            MoneyField::new('penalite_machine')->setCurrency('EUR')->setStoredAsCents(false),
+            MoneyField::new('penalite_surface')->setCurrency('EUR')->setStoredAsCents(false),
+        ];
     }
 }

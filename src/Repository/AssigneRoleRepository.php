@@ -21,6 +21,18 @@ class AssigneRoleRepository extends ServiceEntityRepository
         parent::__construct($registry, AssigneRole::class);
     }
 
+    public function save(AssigneRole $assigneRole): void
+    {
+        $this->_em->persist($assigneRole);
+        $this->_em->flush();
+    }
+
+    public function remove(AssigneRole $assigneRole): void
+    {
+        $this->_em->remove($assigneRole);
+        $this->_em->flush();
+    }
+
 //    /**
 //     * @return AssigneRole[] Returns an array of AssigneRole objects
 //     */

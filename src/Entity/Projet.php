@@ -33,8 +33,11 @@ class Projet
     #[ORM\ManyToOne(inversedBy: 'projets')]
     private ?Equipe $equipe = null;
 
-    #[ORM\OneToMany(mappedBy: 'projet', targetEntity: AssigneRole::class)]
+    #[ORM\OneToMany(mappedBy: 'projet', targetEntity: AssigneRole::class, cascade: ['persist', 'remove'])]
     private Collection $assigneRoles;
+
+    #[ORM\Column]
+    private ?bool $etat = false;
 
     public function __construct()
     {
@@ -132,6 +135,18 @@ class Projet
                 $assigneRole->setProjet(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isEtat(): ?bool
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(bool $etat): static
+    {
+        $this->etat = $etat;
 
         return $this;
     }

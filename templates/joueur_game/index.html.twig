@@ -12,6 +12,8 @@
                         {{ include('phase1a/joueur_phase1a.stream.html.twig') }}
                     {% elseif game.phase == '1b' %}
                         {{ include('phase1b/joueur_phase1b.stream.html.twig') }}
+                    {% elseif game.phase == '2a' %}
+                        {{ include('phase2a/joueur_phase2a.stream.html.twig') }}
                     {% endif %}
                 </div>
             </article>

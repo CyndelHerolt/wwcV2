@@ -35,6 +35,9 @@ class Proposition
     #[ORM\OneToMany(mappedBy: 'proposition', targetEntity: EstimationRole::class, cascade: ['persist', 'remove'])]
     private Collection $estimationRoles;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Projet $projet = null;
+
     public function __construct()
     {
         $this->estimationRoles = new ArrayCollection();
@@ -131,6 +134,18 @@ class Proposition
                 $estimationRole->setProposition(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getProjet(): ?Projet
+    {
+        return $this->projet;
+    }
+
+    public function setProjet(?Projet $projet): static
+    {
+        $this->projet = $projet;
 
         return $this;
     }

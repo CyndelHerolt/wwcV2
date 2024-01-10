@@ -1,0 +1,149 @@
+<turbo-stream action="replace" target="phase-joueur-{{ game.id }}">
+    <template>
+        <div id="phase-joueur-{{ game.id }}" {{ turbo_stream_listen('game-joueur/'~game.id~'/equipe/'~equipe.id) }}>
+            {#            <h2>Phase : {{ game.phase }}</h2> #}
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Retour des appels d'offres !</strong>
+
+                {% if equipe.propositions|filter(e => e.etat == true)|length > 0 %}
+                    Félicitations vous avez remporté {{ equipe.propositions|filter(e => e.etat == true)|length }} appels d'offres !
+                {% else %}
+                    Dommage vous n'avez remporté aucun appel d'offre !
+                {% endif %}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <h3>Resultat des appels d'offres</h3>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for proposition in equipe.propositions %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link {% if loop.first %}active{% endif %}"
+                           id="proposition-{{ proposition.id }}-tab"
+                           data-bs-toggle="tab" href="#proposition-{{ proposition.id }}" role="tab"
+                           aria-controls="proposition-{{ proposition.id }}"
+                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                            {{ proposition.offre.libelle }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                {% for proposition in equipe.propositions %}
+                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}"
+                         id="proposition-{{ proposition.id }}"
+                         role="tabpanel" aria-labelledby="proposition-{{ proposition.id }}-tab">
+                        <div class="card-body">
+                            <h3>{{ proposition.offre.libelle }}</h3>
+                            <em>{{ proposition.offre.descriptionCourte|raw }}</em>
+                            <hr>
+                            {% if proposition.etat == true %}
+
+
+                                <div class="alert alert-success" role="alert">
+                                    <strong>Vous avez remporté l'appel d'offre !</strong>
+                                </div>
+                                <h4>Conditions du contrat</h4>
+                                <p>Vous disposez de {{ proposition.offre.deadline }} mois pour produire et livrer le
+                                    projet. Le règlement de l'accompte prend effet immédiatement, le reste du solde vous
+                                    sera délivré à la livraison. Si vous dépassez les délais établis, des pénalités vous
+                                    seront imputées.</p>
+                                <ul>
+                                    <li>
+                                        <span>Montant total du projet :</span> {{ proposition.prix|format_currency('EUR', locale='fr') }}
+                                    </li>
+                                    {% set accompte = proposition.prix * (proposition.offre.accompte / 100) %}
+                                    <li>
+                                        <span>Montant de l'accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}
+                                    </li>
+                                    {% set livraison = game.periode + proposition.offre.deadline %}
+                                    <li><span>Livraison :</span>
+                                        {% if livraison == 1 %}
+                                            janvier
+                                        {% elseif livraison == 2 %}
+                                            février
+                                        {% elseif livraison == 3 %}
+                                            mars
+                                        {% elseif livraison == 4 %}
+                                            avril
+                                        {% elseif livraison == 5 %}
+                                            mai
+                                        {% elseif livraison == 6 %}
+                                            juin
+                                        {% elseif livraison == 7 %}
+                                            juillet
+                                        {% elseif livraison == 8 %}
+                                            août
+                                        {% elseif livraison == 9 %}
+                                            septembre
+                                        {% elseif livraison == 10 %}
+                                            octobre
+                                        {% elseif livraison == 11 %}
+                                            novembre
+                                        {% elseif livraison == 12 %}
+                                            décembre
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                                <h4>Ressources humaines nécessaires</h4>
+                                <ul>
+                                    {% for besoinRole in proposition.offre.besoinRole %}
+                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours
+                                            <br>
+                                            <small class="text-muted">
+                                                Vous aviez estimé :
+                                                {% for estimation in proposition.estimationRoles %}
+                                                    {% if estimation.role.id == besoinRole.role.id %}
+                                                        {{ estimation.nbJours }} jours.
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </small>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                                <h4>Affectations des ressources humaines au projet</h4>
+
+                                <turbo-frame id="projet-frame-{{ proposition.projet.id }}">
+                                    {% if projetForms is defined and projetForms is not null %}
+                                            {{ form_start(projetForms[proposition.projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':proposition.projet.id})}) }}
+                                            {{ form_row(projetForms[proposition.projet.id].assigneRoles) }}
+                                            <button class="btn btn-primary
+                                                    {% if game.pause == true %}
+                                                    disabled
+                                                    {% endif %}"
+                                                    {% if game.pause == true %}disabled{% endif %}
+                                                    type="submit">Affecter
+                                            </button>
+                                            {{ form_end(projetForms[proposition.projet.id]) }}
+                                        {% elseif projetForms is null %}
+                                            <div class="alert alert-warning" role="alert">
+                                                <strong>Pourquoi projetForms est vide alors que si je le dump je le récupère bien ?</strong>
+                                            </div>
+                                    {% endif %}
+                                </turbo-frame>
+
+                            {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Vous n'avez pas remporté l'appel d'offre !</strong>
+                                </div>
+                            {% endif %}
+
+
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
+                {% if game.pause == true %}
+                    <i class="fa-duotone fa-circle-pause fa-3x" style="color: orange"></i>
+                {% else %}
+                    <i class="fa-duotone fa-circle-play fa-3x" style="color: green"></i>
+                {% endif %}
+            </div>
+        </div>
+    </template>
+</turbo-stream>

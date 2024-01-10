@@ -21,6 +21,18 @@ class ProjetRepository extends ServiceEntityRepository
         parent::__construct($registry, Projet::class);
     }
 
+    public function save(Projet $projet): void
+    {
+        $this->_em->persist($projet);
+        $this->_em->flush();
+    }
+
+    public function remove(Projet $projet): void
+    {
+        $this->_em->remove($projet);
+        $this->_em->flush();
+    }
+
 //    /**
 //     * @return Projet[] Returns an array of Projet objects
 //     */

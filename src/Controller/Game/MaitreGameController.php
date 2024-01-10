@@ -7,10 +7,13 @@ use App\Controller\Phase1A\JoueurPhase1AController;
 use App\Controller\Phase1A\MaitrePhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
+use App\Controller\Phase2A\JoueurPhase2AController;
+use App\Form\AssigneRoleType;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
+use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,6 +33,7 @@ class MaitreGameController extends AbstractController
         private JoueurGameController    $joueurGameController,
         private JoueurPhase1AController $joueurPhase1AController,
         private JoueurPhase1BController $joueurPhase1BController,
+        private JoueurPhase2AController $joueurPhase2AController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
@@ -95,6 +99,7 @@ class MaitreGameController extends AbstractController
             $this->joueurPhase1BController->index($game, $offreUpdated);
         } elseif ($game->getPhase() === "1b") {
             $game->setPhase("2a");
+            $this->joueurPhase2AController->index($game);
         }
         $this->gameRepository->save($game, true);
 
@@ -147,7 +152,7 @@ class MaitreGameController extends AbstractController
         $forms = [];
         foreach ($offres as $offre) {
             foreach ($offre->getPropositions() as $proposition) {
-                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition, ['game'=>$game])->createView();
+                $forms[$offre->getId()][$proposition->getEquipe()->getId()] = $this->createForm(PropositionType::class, $proposition, ['game' => $game])->createView();
             }
         }
 
@@ -161,6 +166,16 @@ class MaitreGameController extends AbstractController
         $this->gameRepository->save($game);
 
         foreach ($equipes as $equipe) {
+            $projets = $equipe->getProjets();
+            // créer un formulaire pour chaque assigneRole
+            $assigneRoleForms = [];
+            foreach ($projets as $projet) {
+                foreach ($projet->getAssigneRoles() as $assigneRole) {
+                    $form = $this->createForm(AssigneRoleType::class, $assigneRole, ['game' => $game]);
+                    $assigneRoleForms[$projet->getId()][$assigneRole->getId()] = $form->createView();
+                }
+            }
+
             $this->hub->publish(new Update(
                 'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
                 $this->renderView('phase' . $phase . '/joueur_phase' . $phase . '.stream.html.twig', [
@@ -169,6 +184,7 @@ class MaitreGameController extends AbstractController
                     'offres' => $offres,
                     'forms' => $forms,
                     'offreUpdated' => $offreUpdated,
+                    'assigneRoleForms' => $assigneRoleForms ?? null,
                 ]),
                 false
             ));

@@ -33,7 +33,6 @@ class JoueurPhase1BController extends AbstractController
         });
 
         // créer un formulaire pour chaque proposition
-        // créer un formulaire pour chaque proposition
         $forms = [];
         foreach ($offres as $offre) {
             foreach ($offre->getPropositions() as $proposition) {

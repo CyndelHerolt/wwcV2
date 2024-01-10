@@ -152,7 +152,7 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Proposition::class)]
     private Collection $propositions;
 
-    #[ORM\ManyToOne(inversedBy: 'equipes')]
+    #[ORM\ManyToOne(inversedBy: 'equipes', cascade: ["persist"])]
     private ?Game $game = null;
 
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Projet::class)]
@@ -178,6 +178,11 @@ class Equipe
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getNom();
     }
 
     public function getNom(): ?string
