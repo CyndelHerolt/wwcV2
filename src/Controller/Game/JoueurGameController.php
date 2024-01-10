@@ -4,9 +4,12 @@ namespace App\Controller\Game;
 
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase2A\JoueurPhase2AController;
+use App\Form\AssigneRoleType;
+use App\Form\ProjetType;
 use App\Form\PropositionType;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
+use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -20,9 +23,10 @@ class JoueurGameController extends AbstractController
 {
     public function __construct(
         private JoueurPhase1BController $joueurPhase1BController,
-        private JoueurPhase2AController $joueurPhase1CController,
+        private JoueurPhase2AController $joueurPhase2AController,
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
+        private ProjetRepository        $projetRepository,
         private readonly RequestStack   $session,
     )
     {
@@ -60,13 +64,23 @@ class JoueurGameController extends AbstractController
             $this->joueurPhase1BController->index($game, $offreUpdated);
         }
         elseif ($game->getPhase() === '2a') {
-
+            $projets = $this->projetRepository->findBy(['equipe' => $this->getUser()->getEquipe()]);
+            // créer un formulaire pour chaque assigneRole
+            $projetForms = [];
+            foreach ($projets as $projet) {
+                $form = $this->createForm(ProjetType::class, $projet, ['game' => $game]);
+                $projetForms[$projet->getId()] = $form->createView();
+            }
+            $this->joueurPhase2AController->index($game);
         }
+
+//        dump($projetForms);
 
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
             'forms' => $forms ?? null,
+            'projetForms' => $projetForms ?? null,
         ]);
     }
 }

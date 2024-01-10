@@ -117,12 +117,9 @@ class PropositionController extends AbstractController
             }
             $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
 
-
-            // Redirect to the game page or another appropriate page
             return $this->redirectToRoute('app_joueur_game');
         }
 
-        // If the form is not submitted or not valid, re-display the form
         return $this->render('proposition/form.stream.html.twig', [
             'offre' => $proposition->getOffre(),
             'proposition' => $proposition,
@@ -141,6 +138,17 @@ class PropositionController extends AbstractController
         $equipe = $proposition->getEquipe();
 
         $this->propositionRepository->remove($proposition);
+
+        // actualiser le contenu côté mj
+        $game = $this->getUser()->getEquipe()->getGame();
+        $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+        $equipes = $this->equipeRepository->findBy(['game' => $game]);
+        if($this->session->getSession()->get('offre') !== null) {
+            $offreUpdated = $this->session->getSession()->get('offre');
+        } else {
+            $offreUpdated = null;
+        }
+        $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
 
         return $this->render('proposition/empty_form.stream.html.twig', [
             'offre' => $offre,

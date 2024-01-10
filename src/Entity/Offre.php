@@ -59,6 +59,9 @@ class Offre
     #[ORM\Column]
     private ?int $accompte = null;
 
+    #[ORM\OneToMany(mappedBy: 'offre', targetEntity: Projet::class)]
+    private Collection $projets;
+
     public function getTypeOffre(): ?TypeOffre
     {
         return $this->type_offre;
@@ -76,6 +79,7 @@ class Offre
         $this->besoin_role = new ArrayCollection();
         $this->equipes = new ArrayCollection();
         $this->propositions = new ArrayCollection();
+        $this->projets = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -274,6 +278,36 @@ class Offre
     public function setAccompte(int $accompte): static
     {
         $this->accompte = $accompte;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Projet>
+     */
+    public function getProjets(): Collection
+    {
+        return $this->projets;
+    }
+
+    public function addProjet(Projet $projet): static
+    {
+        if (!$this->projets->contains($projet)) {
+            $this->projets->add($projet);
+            $projet->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProjet(Projet $projet): static
+    {
+        if ($this->projets->removeElement($projet)) {
+            // set the owning side to null (unless already changed)
+            if ($projet->getOffre() === $this) {
+                $projet->setOffre(null);
+            }
+        }
 
         return $this;
     }

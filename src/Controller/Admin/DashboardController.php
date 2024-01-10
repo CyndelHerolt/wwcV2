@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Equipe;
 use App\Entity\Game;
 use App\Entity\Offre;
+use App\Entity\Profil;
 use App\Entity\Role;
 use App\Entity\TypeOffre;
 use App\Entity\User;
@@ -57,5 +58,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
         yield MenuItem::linkToCrud('Equipes', 'fas fa-users', Equipe::class);
         yield MenuItem::linkToCrud('Role', 'fas fa-users', Role::class);
+        yield MenuItem::linkToCrud('Profil', 'fas fa-users', Profil::class);
     }
 }

@@ -1,0 +1,12 @@
+<turbo-frame id="{{ frameId }}">
+    {{ form_start(form, {'method': 'POST', 'action': path('app_projet_update', {'id':proposition.projet.id})}) }}
+    {{ form_row(form.assigneRoles) }}
+    <button class="btn btn-primary
+                                                    {% if game.pause == true %}
+                                                    disabled
+                                                    {% endif %}"
+            {% if game.pause == true %}disabled{% endif %}
+            type="submit">Affecter
+    </button>
+    {{ form_end(form) }}
+</turbo-frame>

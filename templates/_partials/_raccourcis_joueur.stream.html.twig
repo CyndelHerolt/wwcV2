@@ -1,0 +1,249 @@
+<div class="raccourcis_menu">
+    <i class="fa-solid fa-folder-open fa-xl" type="button" style="color: {{ equipe.couleur }}" data-bs-toggle="modal"
+       data-bs-target="#projetsModal"></i>
+    <i class="fa-solid fa-money-bill-transfer fa-xl" type="button" style="color: {{ equipe.couleur }}"
+       data-bs-toggle="modal" data-bs-target="#financesModal"></i>
+    <i class="fa-solid fa-users fa-xl" type="button" style="color: {{ equipe.couleur }}" data-bs-toggle="modal"
+       data-bs-target="#salariesModal"></i>
+</div>
+
+
+<!-- Modal projets -->
+<div class="modal fade modal-xl" id="projetsModal" tabindex="-1" aria-labelledby="projetsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="projetsModalLabel">Projets en cours</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for projet in equipe.projets|filter(e => e.etat == false) %}
+                    <div class="card">
+                        <div class="card-header">
+                            {{ projet.offre.libelle }}
+                            <em>{{ projet.offre.descriptionCourte|raw }}</em>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                <li>Début du projet :
+                                    {% if projet.debut == 1 %}
+                                        janvier
+                                    {% elseif projet.debut == 2 %}
+                                        février
+                                    {% elseif projet.debut == 3 %}
+                                        mars
+                                    {% elseif projet.debut == 4 %}
+                                        avril
+                                    {% elseif projet.debut == 5 %}
+                                        mai
+                                    {% elseif projet.debut == 6 %}
+                                        juin
+                                    {% elseif projet.debut == 7 %}
+                                        juillet
+                                    {% elseif projet.debut == 8 %}
+                                        août
+                                    {% elseif projet.debut == 9 %}
+                                        septembre
+                                    {% elseif projet.debut == 10 %}
+                                        octobre
+                                    {% elseif projet.debut == 11 %}
+                                        novembre
+                                    {% elseif projet.debut == 12 %}
+                                        décembre
+                                    {% endif %}
+                                </li>
+                                <li><span>Livraison :</span>
+                                    {% if projet.fin == 1 %}
+                                        janvier
+                                    {% elseif projet.fin == 2 %}
+                                        février
+                                    {% elseif projet.fin == 3 %}
+                                        mars
+                                    {% elseif projet.fin == 4 %}
+                                        avril
+                                    {% elseif projet.fin == 5 %}
+                                        mai
+                                    {% elseif projet.fin == 6 %}
+                                        juin
+                                    {% elseif projet.fin == 7 %}
+                                        juillet
+                                    {% elseif projet.fin == 8 %}
+                                        août
+                                    {% elseif projet.fin == 9 %}
+                                        septembre
+                                    {% elseif projet.fin == 10 %}
+                                        octobre
+                                    {% elseif projet.fin == 11 %}
+                                        novembre
+                                    {% elseif projet.fin == 12 %}
+                                        décembre
+                                    {% endif %}
+                                    <br>
+                                    <small class="text-muted">
+                                        Reste {{ projet.fin - game.periode }} mois.
+                                    </small>
+                                </li>
+                            </ul>
+                            <hr>
+                            <ul>
+                                {% for assigneRole in projet.assigneRoles %}
+                                    <li>
+                                        {{ assigneRole.role.libelle }} : {{ assigneRole.nbJours }} /
+                                        {% for besoinRole in projet.offre.besoinRole %}
+                                            {% if besoinRole.role.id == assigneRole.role.id %}
+                                                {{ besoinRole.nbJours }}
+                                                <br>
+                                                <small class="text-muted">
+                                                    Reste {{ besoinRole.nbJours - assigneRole.nbJours }} jours à faire
+                                                    sur
+                                                    {{ besoinRole.nbJours }} prévus.
+                                                </small>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="card-footer text-muted">
+
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="modal-footer">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal finances -->
+<div class="modal fade modal-xl" id="financesModal" tabindex="-1" aria-labelledby="financesModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="financesModalLabel">Situation financière</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="bilan_comptable">
+                    <table class="table table-bordered no-margin">
+                        <thead>
+                        <tr>
+                            <th colspan="2">Actif</th>
+                            <th colspan="2">Passif</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>
+                                Matériel
+                            </td>
+                            <td>
+                                {{ equipe.materielActif }} €
+                            </td>
+                            <td>
+                                Capital social
+                            </td>
+                            <td>
+                                {{ equipe.passifCapital }} €
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Créances
+                            </td>
+                            <td>
+                                {{ equipe.actifCreance }} €
+                            </td>
+                            <td>
+                                Résultat
+                            </td>
+                            <td>
+                                {{ equipe.passifResultat }} €
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Disponibilités
+                            </td>
+                            <td>
+                                {{ equipe.actifDispo }} €
+                            </td>
+                            <td>
+                                Dettes financières
+                            </td>
+                            <td>
+                                {{ equipe.passifDetteFinanciere }} €
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                Dettes fournisseurs
+                            </td>
+                            <td>
+                                {{ equipe.passifDetteFournisseurs }} €
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                Dettes fiscales et sociales
+                            </td>
+                            <td>
+                                {{ equipe.passifDetteFiscales }} €
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                Découvert bancaire
+                            </td>
+                            <td>
+                                {{ equipe.passifDecouvert }} €
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal salaries -->
+<div class="modal fade modal-lg" id="salariesModal" tabindex="-1" aria-labelledby="salariesModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="salariesModalLabel">Masse salariale</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div>

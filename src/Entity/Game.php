@@ -98,8 +98,14 @@ class Game
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'game')]
     private Collection $users;
 
-    #[ORM\OneToMany(mappedBy: 'game', targetEntity: Equipe::class)]
+    #[ORM\OneToMany(mappedBy: 'game', targetEntity: Equipe::class, cascade: ["persist"])]
     private Collection $equipes;
+
+    #[ORM\ManyToMany(targetEntity: Profil::class, mappedBy: 'game')]
+    private Collection $profils;
+
+    #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'game', cascade: ["persist"])]
+    private Collection $roles;
 
     public function __construct()
     {
@@ -107,6 +113,8 @@ class Game
         $this->typeOffres = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->equipes = new ArrayCollection();
+        $this->profils = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -519,6 +527,60 @@ class Game
             if ($equipe->getGame() === $this) {
                 $equipe->setGame(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Profil>
+     */
+    public function getProfils(): Collection
+    {
+        return $this->profils;
+    }
+
+    public function addProfil(Profil $profil): static
+    {
+        if (!$this->profils->contains($profil)) {
+            $this->profils->add($profil);
+            $profil->addGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProfil(Profil $profil): static
+    {
+        if ($this->profils->removeElement($profil)) {
+            $profil->removeGame($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): static
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles->add($role);
+            $role->addGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): static
+    {
+        if ($this->roles->removeElement($role)) {
+            $role->removeGame($this);
         }
 
         return $this;
