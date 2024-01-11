@@ -24,6 +24,9 @@ class AssigneRole
     #[ORM\ManyToOne(inversedBy: 'assigneRoles', cascade: ['persist', 'remove'])]
     private ?Projet $projet = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $nbJoursPrevi = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class AssigneRole
     public function setProjet(?Projet $projet): static
     {
         $this->projet = $projet;
+
+        return $this;
+    }
+
+    public function getNbJoursPrevi(): ?int
+    {
+        return $this->nbJoursPrevi;
+    }
+
+    public function setNbJoursPrevi(?int $nbJoursPrevi): static
+    {
+        $this->nbJoursPrevi = $nbJoursPrevi;
 
         return $this;
     }

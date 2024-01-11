@@ -29,7 +29,7 @@ class ProjetType extends AbstractType
                 'allow_delete' => false,
                 'by_reference' => false,
                 'mapped' => true,
-                'label' => 'Mobilisation de chaque rôle',
+                'label' => false,
             ]);
     }
 
@@ -38,6 +38,8 @@ class ProjetType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Projet::class,
             'game' => null,
+            //todo: retirer en prod
+            'csrf_protection' => false,
         ]);
     }
 }

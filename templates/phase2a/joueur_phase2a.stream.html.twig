@@ -17,49 +17,192 @@
 
             <h3>Resultat des appels d'offres</h3>
 
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <div class="row justify-content-start">
                 {% for proposition in equipe.propositions %}
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h3>{{ proposition.offre.libelle }}</h3>
+                                <em>{{ proposition.offre.descriptionCourte|raw }}</em>
+                            </div>
+                            <div class="card-body">
+
+                                {% if proposition.etat == true %}
+
+
+                                    <div class="alert alert-success" role="alert">
+                                        <strong>Vous avez remporté l'appel d'offre !</strong>
+                                    </div>
+                                    <h4>Conditions du contrat</h4>
+                                    <p>Vous disposez de {{ proposition.offre.deadline }} mois pour produire et livrer le
+                                        projet. Le règlement de l'accompte prend effet immédiatement, le reste du solde
+                                        vous
+                                        sera délivré à la livraison. Si vous dépassez les délais établis, des pénalités
+                                        vous
+                                        seront imputées.</p>
+                                    <ul class="data-list flex flex-row justify-content-around">
+                                        <li>
+                                            <span>Montant total :</span> {{ proposition.prix|format_currency('EUR', locale='fr') }}
+                                        </li>
+                                        {% set accompte = proposition.prix * (proposition.offre.accompte / 100) %}
+                                        <li>
+                                            <span>Accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}
+                                        </li>
+                                        {% set livraison = game.periode + proposition.offre.deadline %}
+                                        <li><span>Livraison :</span>
+                                            {% if livraison == 1 %}
+                                                janvier
+                                            {% elseif livraison == 2 %}
+                                                février
+                                            {% elseif livraison == 3 %}
+                                                mars
+                                            {% elseif livraison == 4 %}
+                                                avril
+                                            {% elseif livraison == 5 %}
+                                                mai
+                                            {% elseif livraison == 6 %}
+                                                juin
+                                            {% elseif livraison == 7 %}
+                                                juillet
+                                            {% elseif livraison == 8 %}
+                                                août
+                                            {% elseif livraison == 9 %}
+                                                septembre
+                                            {% elseif livraison == 10 %}
+                                                octobre
+                                            {% elseif livraison == 11 %}
+                                                novembre
+                                            {% elseif livraison == 12 %}
+                                                décembre
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                    <hr>
+                                    <h4>Ressources humaines nécessaires</h4>
+                                    <ul class="data-list flex flex-row justify-content-around">
+                                        {% for besoinRole in proposition.offre.besoinRole %}
+                                            <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours
+                                                <br>
+                                                <small class="text-muted">
+                                                    Vous aviez estimé :
+                                                    {% for estimation in proposition.estimationRoles %}
+                                                        {% if estimation.role.id == besoinRole.role.id %}
+                                                            {{ estimation.nbJours }} jours.
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </small>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+
+                                {% else %}
+                                    <div class="alert alert-danger" role="alert">
+                                        <strong>Vous n'avez pas remporté l'appel d'offre !</strong>
+                                    </div>
+                                    <h4>Rappel de votre proposition</h4>
+                                    <ul class="data-list flex flex-row justify-content-around">
+                                        <li>
+                                            Budget de l'entreprise :
+                                            <i class="fa-solid fa-arrow-down" style="color: red"></i>
+                                            {{ proposition.offre.prixMin|format_currency('EUR', locale='fr') }}
+                                            &nbsp;&nbsp;
+                                            <i class="fa-solid fa-arrow-up" style="color: green"></i>
+                                            {{ proposition.offre.prixMax|format_currency('EUR', locale='fr') }}
+                                        </li>
+                                        <li>
+                                            Votre offre : {{ proposition.prix|format_currency('EUR', locale='fr') }}
+                                        </li>
+                                    </ul>
+                                    <hr>
+                                    <ul class="data-list flex flex-row justify-content-around">
+                                        <li>
+                                            Estimation de l'entreprise : <br>
+                                            {% for besoin in proposition.offre.besoinRole %}
+                                                <span>{{ besoin.role.libelle }} : </span>
+                                                {{ besoin.nbJoursEstimeMin }} à
+                                                {{ besoin.nbJoursEstimeMax }} jours
+                                                <br>
+                                            {% endfor %}
+                                        </li>
+                                        <li>
+                                            Votre estimation : <br>
+                                            {% for estimation in proposition.estimationRoles %}
+                                                <span>{{ estimation.role.libelle }} : </span>
+                                                {{ estimation.nbJours }} jours.
+                                                <br>
+                                            {% endfor %}
+                                        </li>
+                                    </ul>
+                                    <hr>
+                                    <ul class="data-list flex flex-row justify-content-around">
+                                        <li>
+                                            Type de projet :
+                                            {{ proposition.offre.typeOffre.libelle }}
+                                        </li>
+                                        <li>
+                                            Votre proposition :
+                                            {{ proposition.type.libelle }}
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+
+            <hr>
+
+
+            <h3>Gestion des projets</h3>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for projet in equipe.projets %}
                     <li class="nav-item" role="presentation">
                         <a class="nav-link {% if loop.first %}active{% endif %}"
-                           id="proposition-{{ proposition.id }}-tab"
-                           data-bs-toggle="tab" href="#proposition-{{ proposition.id }}" role="tab"
-                           aria-controls="proposition-{{ proposition.id }}"
+                           id="projet-{{ projet.id }}-tab"
+                           data-bs-toggle="tab" href="#projet-{{ projet.id }}" role="tab"
+                           aria-controls="projet-{{ projet.id }}"
                            aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                            {{ proposition.offre.libelle }}
+                            {{ projet.offre.libelle }}
                         </a>
                     </li>
                 {% endfor %}
             </ul>
 
             <div class="tab-content" id="myTabContent">
-                {% for proposition in equipe.propositions %}
+                {% for projet in equipe.projets %}
                     <div class="card tab-pane fade {% if loop.first %}show active{% endif %}"
-                         id="proposition-{{ proposition.id }}"
-                         role="tabpanel" aria-labelledby="proposition-{{ proposition.id }}-tab">
+                         id="projet-{{ projet.id }}"
+                         role="tabpanel" aria-labelledby="projet-{{ projet.id }}-tab">
                         <div class="card-body">
-                            <h3>{{ proposition.offre.libelle }}</h3>
-                            <em>{{ proposition.offre.descriptionCourte|raw }}</em>
-                            <hr>
-                            {% if proposition.etat == true %}
-
-
-                                <div class="alert alert-success" role="alert">
-                                    <strong>Vous avez remporté l'appel d'offre !</strong>
+                            <h3>{{ projet.offre.libelle }}</h3>
+                            <div class="d-inline-flex gap-1">
+                                <em>{{ projet.offre.descriptionCourte|raw }}</em>
+                                <em class="link-primary" data-bs-toggle="collapse"
+                                    data-bs-target="#collapseExample" aria-expanded="false"
+                                    aria-controls="collapseExample">
+                                    En savoir plus
+                                </em>
+                            </div>
+                            <div class="collapse" id="collapseExample">
+                                <div class="card card-body">
+                                    {{ projet.offre.descriptionLongue|raw }}
                                 </div>
+                            </div>
+                            <hr>
+                            {% if projet.etat == false %}
+
                                 <h4>Conditions du contrat</h4>
-                                <p>Vous disposez de {{ proposition.offre.deadline }} mois pour produire et livrer le
-                                    projet. Le règlement de l'accompte prend effet immédiatement, le reste du solde vous
-                                    sera délivré à la livraison. Si vous dépassez les délais établis, des pénalités vous
-                                    seront imputées.</p>
-                                <ul>
+                                <ul class="data-list flex flex-row justify-content-around">
                                     <li>
-                                        <span>Montant total du projet :</span> {{ proposition.prix|format_currency('EUR', locale='fr') }}
+                                        <span>Montant total du projet :</span> {{ projet.prix|format_currency('EUR', locale='fr') }}
                                     </li>
-                                    {% set accompte = proposition.prix * (proposition.offre.accompte / 100) %}
+                                    {% set accompte = projet.prix * (projet.offre.accompte / 100) %}
                                     <li>
                                         <span>Montant de l'accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}
                                     </li>
-                                    {% set livraison = game.periode + proposition.offre.deadline %}
+                                    {% set livraison = game.periode + projet.offre.deadline %}
                                     <li><span>Livraison :</span>
                                         {% if livraison == 1 %}
                                             janvier
@@ -89,54 +232,34 @@
                                     </li>
                                 </ul>
                                 <h4>Ressources humaines nécessaires</h4>
-                                <ul>
-                                    {% for besoinRole in proposition.offre.besoinRole %}
-                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours
-                                            <br>
-                                            <small class="text-muted">
-                                                Vous aviez estimé :
-                                                {% for estimation in proposition.estimationRoles %}
-                                                    {% if estimation.role.id == besoinRole.role.id %}
-                                                        {{ estimation.nbJours }} jours.
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </small>
-                                        </li>
+                                <ul class="data-list flex flex-row justify-content-around">
+                                    {% for besoinRole in projet.offre.besoinRole %}
+                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours</li>
                                     {% endfor %}
                                 </ul>
 
                                 <h4>Affectations des ressources humaines au projet</h4>
-
-                                <turbo-frame id="projet-frame-{{ proposition.projet.id }}">
+                                <turbo-frame id="projet-frame-{{ projet.id }}">
                                     {% if projetForms is defined and projetForms is not null %}
-                                            {{ form_start(projetForms[proposition.projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':proposition.projet.id})}) }}
-                                            {{ form_row(projetForms[proposition.projet.id].assigneRoles) }}
-                                            <button class="btn btn-primary
-                                                    {% if game.pause == true %}
-                                                    disabled
-                                                    {% endif %}"
-                                                    {% if game.pause == true %}disabled{% endif %}
-                                                    type="submit">Affecter
-                                            </button>
-                                            {{ form_end(projetForms[proposition.projet.id]) }}
-                                        {% elseif projetForms is null %}
-                                            <div class="alert alert-warning" role="alert">
-                                                <strong>Pourquoi projetForms est vide alors que si je le dump je le récupère bien ?</strong>
-                                            </div>
+                                        {{ form_start(projetForms[projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':projet.id})}) }}
+                                        {{ form_row(projetForms[projet.id].assigneRoles) }}
+                                        <button class="btn btn-primary
+                                                                {% if game.pause == true %}
+                                                                disabled
+                                                                {% endif %}"
+                                                {% if game.pause == true %}disabled{% endif %}
+                                                type="submit">Affecter
+                                        </button>
+                                        {{ form_end(projetForms[projet.id]) }}
                                     {% endif %}
                                 </turbo-frame>
-
-                            {% else %}
-                                <div class="alert alert-danger" role="alert">
-                                    <strong>Vous n'avez pas remporté l'appel d'offre !</strong>
-                                </div>
-                            {% endif %}
-
-
+{% endif %}
                         </div>
                     </div>
                 {% endfor %}
             </div>
+
+
             <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
                 {% if game.pause == true %}
                     <i class="fa-duotone fa-circle-pause fa-3x" style="color: orange"></i>

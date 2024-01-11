@@ -33,3 +33,9 @@
     margin: 15px;
   }
 }
+
+#projet_assigneRoles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}

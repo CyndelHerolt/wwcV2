@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class MaitrePhase1BController extends AbstractController
 {
     public function __construct(
-        private HubInterface   $hub,
-        private UserRepository $userRepository,
+        private HubInterface    $hub,
+        private UserRepository  $userRepository,
         private OffreRepository $offreRepository,
     )
     {
@@ -32,6 +32,8 @@ class MaitrePhase1BController extends AbstractController
         } else {
             $offreUpdated = $offres[0] ?? null;
         }
+
+        dump($offreUpdated);
 
         foreach ($maitres as $maitre) {
             $this->hub->publish(new Update(

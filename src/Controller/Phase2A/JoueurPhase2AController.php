@@ -33,7 +33,6 @@ class JoueurPhase2AController extends AbstractController
         // envoyer une mise à jour Mercure pour chaque équipe
         foreach ($equipes as $equipe) {
             $propositions = $this->propositionRepository->findBy(['equipe' => $equipe]);
-            $projets = $this->projetRepository->findBy(['equipe' => $equipe]);
 
             foreach ($propositions as $proposition) {
                 // si il n'existe pas encore de projet pour cette offre et cette équipe
@@ -44,7 +43,7 @@ class JoueurPhase2AController extends AbstractController
                     $projet->setDebut($game->getPeriode());
                     $projet->setFin($game->getPeriode() + $proposition->getOffre()->getDeadline());
                     $projet->setPrix($proposition->getPrix());
-                    $this->projetRepository->save($projet);
+
 
                     $proposition->setProjet($projet);
                     $this->propositionRepository->save($proposition);
@@ -58,11 +57,15 @@ class JoueurPhase2AController extends AbstractController
 
                             $assigneRole->setProjet($projet);
                             $assigneRole->setRole($role->getRole());
-                            $assigneRole->setNbJours(0);
+                            $assigneRole->setNbJours($role->getNbJours());
+                            $assigneRole->setNbJoursPrevi(0);
+                            $projet->addAssigneRole($assigneRole);
 
                             $this->assigneRoleRepository->save($assigneRole);
                         }
                     }
+                    $this->projetRepository->save($projet);
+
                 } // si il existe un projet pour cette offre et cette equipe mais que l'etat de la proposition est a false
                 elseif ($this->projetRepository->findOneBy(['offre' => $proposition->getOffre(), 'equipe' => $equipe]) && $proposition->isEtat() === false) {
                     $proposition->setProjet(null);
@@ -74,12 +77,15 @@ class JoueurPhase2AController extends AbstractController
                 }
             }
 
-            $projetForms = [];
-            foreach ($projets as $projet) {
-//                foreach ($projet->getAssigneRoles() as $assigneRole) {
+            $projets = $this->projetRepository->findBy(['equipe' => $equipe]);
+
+            // todo: comme pour les propositions, permettre de rester sur le même tab après une update du projet
+            if ($projets !== null) {
+                $projetForms = [];
+                foreach ($projets as $projet) {
                     $form = $this->createForm(ProjetType::class, $projet, ['game' => $game]);
                     $projetForms[$projet->getId()] = $form->createView();
-//                }
+                }
             }
 
             $this->hub->publish(new Update(

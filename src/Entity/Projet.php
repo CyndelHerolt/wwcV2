@@ -33,7 +33,7 @@ class Projet
     #[ORM\ManyToOne(inversedBy: 'projets')]
     private ?Equipe $equipe = null;
 
-    #[ORM\OneToMany(mappedBy: 'projet', targetEntity: AssigneRole::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'projet', fetch:'EAGER', targetEntity: AssigneRole::class, cascade: ['persist', 'remove'])]
     private Collection $assigneRoles;
 
     #[ORM\Column]

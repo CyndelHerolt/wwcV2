@@ -23,7 +23,7 @@ class AssigneRoleType extends AbstractType
         $game = $options['game'];
 
         $builder
-            ->add('nb_jours', IntegerType::class, [
+            ->add('nb_jours_previ', IntegerType::class, [
                 'attr' => [
                     'class' => 'form-control',
                     'disabled' => $game->isPause(),
@@ -37,13 +37,14 @@ class AssigneRoleType extends AbstractType
             $form = $event->getForm();
 
             if ($assigneRole instanceof AssigneRole) {
-                $form->add('nb_jours', IntegerType::class, [
+                $form->add('nb_jours_previ', IntegerType::class, [
                     'attr' => [
                         'class' => 'form-control',
                         'disabled' => $game->isPause(),
                     ],
                     'label' => $assigneRole->getRole()->getLibelle(),
                     'mapped' => true,
+                    'help' => "Il reste " . $assigneRole->getNbJours() . " jours à effectuer",
                 ]);
             }
         });
