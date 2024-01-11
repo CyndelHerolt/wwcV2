@@ -47,4 +47,18 @@ body {
   .link-primary {
     cursor: pointer !important;
   }
+
+  .data-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .flex {
+    display: flex !important;
+  }
+
+  .help-text {
+    opacity: .7;
+  }
 }

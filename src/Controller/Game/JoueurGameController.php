@@ -38,7 +38,6 @@ class JoueurGameController extends AbstractController
         $this->session->getSession()->set('game', $this->getUser()->getEquipe()->getGame());
 
         $game = $this->getUser()->getEquipe()->getGame();
-//        $equipe = $this->getUser()->getEquipe();
 
         $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
 
@@ -73,8 +72,6 @@ class JoueurGameController extends AbstractController
             }
             $this->joueurPhase2AController->index($game);
         }
-
-//        dump($projetForms);
 
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,

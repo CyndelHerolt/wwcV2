@@ -8,12 +8,12 @@ use App\Controller\Phase1A\MaitrePhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
 use App\Controller\Phase2A\JoueurPhase2AController;
-use App\Form\AssigneRoleType;
+use App\Form\ProjetType;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
-use App\Repository\PropositionRepository;
+use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +37,7 @@ class MaitreGameController extends AbstractController
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
+        private ProjetRepository        $projetRepository,
         private HubInterface            $hub,
         private readonly RequestStack   $session,
     )
@@ -148,7 +149,6 @@ class MaitreGameController extends AbstractController
         });
 
         // créer un formulaire pour chaque proposition
-        // créer un formulaire pour chaque proposition
         $forms = [];
         foreach ($offres as $offre) {
             foreach ($offre->getPropositions() as $proposition) {
@@ -166,13 +166,13 @@ class MaitreGameController extends AbstractController
         $this->gameRepository->save($game);
 
         foreach ($equipes as $equipe) {
-            $projets = $equipe->getProjets();
+            $projets = $this->projetRepository->findBy(['equipe' => $equipe]);
             // créer un formulaire pour chaque assigneRole
-            $assigneRoleForms = [];
-            foreach ($projets as $projet) {
-                foreach ($projet->getAssigneRoles() as $assigneRole) {
-                    $form = $this->createForm(AssigneRoleType::class, $assigneRole, ['game' => $game]);
-                    $assigneRoleForms[$projet->getId()][$assigneRole->getId()] = $form->createView();
+            if ($projets !== null) {
+                $projetForms = [];
+                foreach ($projets as $projet) {
+                    $form = $this->createForm(ProjetType::class, $projet, ['game' => $game]);
+                    $projetForms[$projet->getId()] = $form->createView();
                 }
             }
 
@@ -184,7 +184,7 @@ class MaitreGameController extends AbstractController
                     'offres' => $offres,
                     'forms' => $forms,
                     'offreUpdated' => $offreUpdated,
-                    'assigneRoleForms' => $assigneRoleForms ?? null,
+                    'projetForms' => $projetForms,
                 ]),
                 false
             ));

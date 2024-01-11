@@ -1,4 +1,8 @@
 <turbo-frame id="{{ frameId }}">
+    <div class="alert alert-danger">
+        Une erreur est survenue, veuillez réeassayer.
+    </div>
+    {% if form is defined and form is not null %}
     {{ form_start(form, {'method': 'POST', 'action': path('app_projet_update', {'id':proposition.projet.id})}) }}
     {{ form_row(form.assigneRoles) }}
     <button class="btn btn-primary
@@ -9,4 +13,5 @@
             type="submit">Affecter
     </button>
     {{ form_end(form) }}
+    {% endif %}
 </turbo-frame>
