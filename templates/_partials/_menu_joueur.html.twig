@@ -1,46 +1,62 @@
-<nav class="menu" style="background-color: {{ equipe.couleur }}">
-    <p>WWC</p>
-    <p>
-        {% if game.periode == 1 %}
-            Janvier
-        {% elseif game.periode == 2 %}
-            Février
-        {% elseif game.periode == 3 %}
-            Mars
-        {% endif %}
-    </p>
-    <div>
-        <ul>
-            <li
-                    {% if game.phase == "1a" or "1b" or "1c" or "2a" %}
-                        class="active"
-                        style="background-color: {{ equipe.couleur }}"
+<div class="header">
+    <nav style="background-color: {{ equipe.couleur }}">
+        <div class="menu">
+            <div class="flex justify-content-between">
+                <p>WWC</p>
+                <p>
+                    {% if game.periode == 1 %}
+                        Janvier
+                    {% elseif game.periode == 2 %}
+                        Février
+                    {% elseif game.periode == 3 %}
+                        Mars
                     {% endif %}
-                    style="color: {{ equipe.couleur }}"
-            >
-                1. Appels d'offres
-            </li>
-            <li
-                    {% if game.phase == "2b" %}
-                        class="active"
-                        style="background-color: {{ equipe.couleur }}"
-                    {% endif %}
-                    style="color: {{ equipe.couleur }}"
-            >
-                2. Retours d'offres et affectations
-            </li>
-            <li
-                    {% if game.phase == "3" %}
-                        class="active"
-                        style="background-color: {{ equipe.couleur }}"
-                    {% endif %}
-                    style="color: {{ equipe.couleur }}"
-            >
-                3. Résultats fin du mois
-            </li>
-        </ul>
-    </div>
-    <p>Prochain tour : 00:00</p>
-    <a href="{{ path('app_logout') }}">Logout</a>
-</nav>
-{% include('_partials/_raccourcis_joueur.stream.html.twig') %}
+                </p>
+            </div>
+            <div>
+                <ul>
+                    <li
+                            {% if game.phase == "1a" or game.phase == "1b" %}
+                                class="active"
+                                style="background-color: {{ equipe.couleur }}"
+                            {% else %}
+                                style="color: {{ equipe.couleur }}"
+                            {% endif %}
+                    >
+                        1. Appels d'offres
+                    </li>
+                    <li
+                            {% if game.phase == "2a" %}
+                                class="active"
+                                style="background-color: {{ equipe.couleur }}"
+                            {% else %}
+                                style="color: {{ equipe.couleur }}"
+                            {% endif %}
+                    >
+                        2. Retours d'offres et affectations
+                    </li>
+                    <li
+                            {% if game.phase == "3" %}
+                                class="active"
+                                style="background-color: {{ equipe.couleur }}"
+                            {% else %}
+                                style="color: {{ equipe.couleur }}"
+                            {% endif %}
+                    >
+                        3. Résultats fin du mois
+                    </li>
+                </ul>
+            </div>
+            <div class="flex justify-content-between">
+                <p>Prochain tour : 00:00</p>
+                <a href="{{ path('app_logout') }}">Logout</a>
+            </div>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Animated striped example"
+             aria-valuenow="{{ game.periode * 10 }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                 style="width: {{ game.periode * 10 }}%"></div>
+        </div>
+    </nav>
+    {% include('_partials/_raccourcis_joueur.stream.html.twig') %}
+</div>

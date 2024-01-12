@@ -21,15 +21,13 @@
                 {% for proposition in equipe.propositions %}
                     <div class="col-lg-6">
                         <div class="card h-100">
-                            <div class="card-header">
+                            <div class="card-header h-100">
                                 <h3>{{ proposition.offre.libelle }}</h3>
                                 <em>{{ proposition.offre.descriptionCourte|raw }}</em>
                             </div>
                             <div class="card-body">
 
                                 {% if proposition.etat == true %}
-
-
                                     <div class="alert alert-success" role="alert">
                                         <strong>Vous avez remporté l'appel d'offre !</strong>
                                     </div>
@@ -154,111 +152,352 @@
 
             <hr>
 
-
-            <h3>Gestion des projets</h3>
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                {% for projet in equipe.projets %}
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link {% if loop.first %}active{% endif %}"
-                           id="projet-{{ projet.id }}-tab"
-                           data-bs-toggle="tab" href="#projet-{{ projet.id }}" role="tab"
-                           aria-controls="projet-{{ projet.id }}"
-                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                            {{ projet.offre.libelle }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-
-            <div class="tab-content" id="myTabContent">
-                {% for projet in equipe.projets %}
-                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}"
-                         id="projet-{{ projet.id }}"
-                         role="tabpanel" aria-labelledby="projet-{{ projet.id }}-tab">
-                        <div class="card-body">
-                            <h3>{{ projet.offre.libelle }}</h3>
-                            <div class="d-inline-flex gap-1">
-                                <em>{{ projet.offre.descriptionCourte|raw }}</em>
-                                <em class="link-primary" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseExample" aria-expanded="false"
-                                    aria-controls="collapseExample">
-                                    En savoir plus
-                                </em>
-                            </div>
-                            <div class="collapse" id="collapseExample">
-                                <div class="card card-body">
-                                    {{ projet.offre.descriptionLongue|raw }}
-                                </div>
-                            </div>
-                            <hr>
-                            {% if projet.etat == false %}
-
-                                <h4>Conditions du contrat</h4>
-                                <ul class="data-list flex flex-row justify-content-around">
-                                    <li>
-                                        <span>Montant total du projet :</span> {{ projet.prix|format_currency('EUR', locale='fr') }}
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#projets" aria-expanded="false" aria-controls="projets">
+                            Gestion des projets
+                        </button>
+                    </h3>
+                    <div id="projets" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                {% for projet in equipe.projets %}
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link {% if loop.first %}active{% endif %}"
+                                           id="projet-{{ projet.id }}-tab"
+                                           data-bs-toggle="tab" href="#projet-{{ projet.id }}" role="tab"
+                                           aria-controls="projet-{{ projet.id }}"
+                                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                                            {{ projet.offre.libelle }}
+                                        </a>
                                     </li>
-                                    {% set accompte = projet.prix * (projet.offre.accompte / 100) %}
-                                    <li>
-                                        <span>Montant de l'accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}
-                                    </li>
-                                    {% set livraison = game.periode + projet.offre.deadline %}
-                                    <li><span>Livraison :</span>
-                                        {% if livraison == 1 %}
-                                            janvier
-                                        {% elseif livraison == 2 %}
-                                            février
-                                        {% elseif livraison == 3 %}
-                                            mars
-                                        {% elseif livraison == 4 %}
-                                            avril
-                                        {% elseif livraison == 5 %}
-                                            mai
-                                        {% elseif livraison == 6 %}
-                                            juin
-                                        {% elseif livraison == 7 %}
-                                            juillet
-                                        {% elseif livraison == 8 %}
-                                            août
-                                        {% elseif livraison == 9 %}
-                                            septembre
-                                        {% elseif livraison == 10 %}
-                                            octobre
-                                        {% elseif livraison == 11 %}
-                                            novembre
-                                        {% elseif livraison == 12 %}
-                                            décembre
-                                        {% endif %}
-                                    </li>
-                                </ul>
-                                <h4>Ressources humaines nécessaires</h4>
-                                <ul class="data-list flex flex-row justify-content-around">
-                                    {% for besoinRole in projet.offre.besoinRole %}
-                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours</li>
-                                    {% endfor %}
-                                </ul>
+                                {% endfor %}
+                            </ul>
 
-                                <h4>Affectations des ressources humaines au projet</h4>
-                                <turbo-frame id="projet-frame-{{ projet.id }}">
-                                    {% if projetForms is defined and projetForms is not null %}
-                                        {{ form_start(projetForms[projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':projet.id})}) }}
-                                        {{ form_row(projetForms[projet.id].assigneRoles) }}
-                                        <button class="btn btn-primary
+                            <div class="tab-content" id="myTabContent">
+                                {% for projet in equipe.projets %}
+                                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}"
+                                         id="projet-{{ projet.id }}"
+                                         role="tabpanel" aria-labelledby="projet-{{ projet.id }}-tab">
+                                        <div class="card-body">
+                                            <h3>{{ projet.offre.libelle }}</h3>
+                                            <div class="d-inline-flex gap-1">
+                                                <em>{{ projet.offre.descriptionCourte|raw }}</em>
+                                                <em class="link-primary" data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseExample" aria-expanded="false"
+                                                    aria-controls="collapseExample">
+                                                    En savoir plus
+                                                </em>
+                                            </div>
+                                            <div class="collapse" id="collapseExample">
+                                                <div class="card card-body">
+                                                    {{ projet.offre.descriptionLongue|raw }}
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            {% if projet.etat == false %}
+
+                                                <h4>Conditions du contrat</h4>
+                                                <ul class="data-list flex flex-row justify-content-around">
+                                                    <li>
+                                                        <span>Montant total du projet :</span> {{ projet.prix|format_currency('EUR', locale='fr') }}
+                                                    </li>
+                                                    {% set accompte = projet.prix * (projet.offre.accompte / 100) %}
+                                                    <li>
+                                                        <span>Montant de l'accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}
+                                                    </li>
+                                                    {% set livraison = game.periode + projet.offre.deadline %}
+                                                    <li><span>Livraison :</span>
+                                                        {% if livraison == 1 %}
+                                                            janvier
+                                                        {% elseif livraison == 2 %}
+                                                            février
+                                                        {% elseif livraison == 3 %}
+                                                            mars
+                                                        {% elseif livraison == 4 %}
+                                                            avril
+                                                        {% elseif livraison == 5 %}
+                                                            mai
+                                                        {% elseif livraison == 6 %}
+                                                            juin
+                                                        {% elseif livraison == 7 %}
+                                                            juillet
+                                                        {% elseif livraison == 8 %}
+                                                            août
+                                                        {% elseif livraison == 9 %}
+                                                            septembre
+                                                        {% elseif livraison == 10 %}
+                                                            octobre
+                                                        {% elseif livraison == 11 %}
+                                                            novembre
+                                                        {% elseif livraison == 12 %}
+                                                            décembre
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
+                                                <h4>Ressources humaines nécessaires</h4>
+                                                <ul class="data-list flex flex-row justify-content-around">
+                                                    {% for besoinRole in projet.offre.besoinRole %}
+                                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours</li>
+                                                    {% endfor %}
+                                                </ul>
+
+                                                <h4>Affectations des ressources humaines au projet</h4>
+                                                <turbo-frame id="projet-frame-{{ projet.id }}">
+                                                    {% if projetForms is defined and projetForms is not null %}
+                                                        {{ form_start(projetForms[projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':projet.id})}) }}
+                                                        {{ form_row(projetForms[projet.id].assigneRoles) }}
+                                                        <button class="btn btn-primary
                                                                 {% if game.pause == true %}
                                                                 disabled
                                                                 {% endif %}"
-                                                {% if game.pause == true %}disabled{% endif %}
-                                                type="submit">Affecter
-                                        </button>
-                                        {{ form_end(projetForms[projet.id]) }}
-                                    {% endif %}
-                                </turbo-frame>
-{% endif %}
+                                                                {% if game.pause == true %}disabled{% endif %}
+                                                                type="submit">Affecter
+                                                        </button>
+                                                        {{ form_end(projetForms[projet.id]) }}
+                                                    {% endif %}
+                                                </turbo-frame>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+                <div class="accordion-item">
+                    <h3 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#personnel" aria-expanded="false" aria-controls="personnel">
+                            Gestion du personnel
+                        </button>
+                    </h3>
+                    <div id="personnel" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="row justify-content-start g-4">
+                                {% for profil in profils %}
+                                    <div class="col-lg-6">
+                                        <div class="card h-100">
+                                            <div class="card-header h-100">
+                                                {{ profil.type }}
+                                            </div>
+                                            <div class="card-body">
+                                                <h4>{{ profil.prenom }} {{ profil.nom }}</h4>
+                                                <em>{{ profil.role.libelle }}</em>
+                                                <hr>
+                                                <h5>Niveau de compétences</h5>
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar"
+                                                         style="width: {{ profil.niveauCompetences * 10 }}%"
+                                                         aria-valuenow="{{ profil.niveauCompetences * 10 }}" aria-valuemin="0"
+                                                         aria-valuemax="100"></div>
+                                                </div>
+                                                <ul class="data-list flex flex-row justify-content-between flex-wrap">
+                                                    <li>
+                                                        <span>Nombre de jours travaillés : </span> {{ profil.role.nbJoursTravailles }}
+                                                    </li>
+                                                    <li>
+                                                        <span>Tâches recurrentes : </span> {{ profil.tacheRecurrente }}
+                                                    </li>
+                                                    <li>
+                                                        <span>Temps de mission : </span>
+                                                        {% if profil.type == 'freelance' %}
+                                                            {{ profil.tempsMission }} mois
+                                                        {% else %}
+                                                            ∞ mois
+                                                        {% endif %}
+                                                    </li>
+                                                    <li>
+                                                        <span>Salaire : </span> {{ profil.salaire|format_currency('EUR', locale='fr') }}
+                                                        {% if profil.type == "salarie" %}
+                                                            / mois
+                                                        {% else %}
+                                                            / jour
+                                                        {% endif %}
+                                                    </li>
+                                                </ul>
 
+                                            </div>
+                                            <div class="card-footer">
+                                                <button class="btn btn-primary">
+                                                    Recruter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+
+{#            <h3>Gestion des projets</h3>#}
+{#            <ul class="nav nav-tabs" id="myTab" role="tablist">#}
+{#                {% for projet in equipe.projets %}#}
+{#                    <li class="nav-item" role="presentation">#}
+{#                        <a class="nav-link {% if loop.first %}active{% endif %}"#}
+{#                           id="projet-{{ projet.id }}-tab"#}
+{#                           data-bs-toggle="tab" href="#projet-{{ projet.id }}" role="tab"#}
+{#                           aria-controls="projet-{{ projet.id }}"#}
+{#                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">#}
+{#                            {{ projet.offre.libelle }}#}
+{#                        </a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#            </ul>#}
+
+{#            <div class="tab-content" id="myTabContent">#}
+{#                {% for projet in equipe.projets %}#}
+{#                    <div class="card tab-pane fade {% if loop.first %}show active{% endif %}"#}
+{#                         id="projet-{{ projet.id }}"#}
+{#                         role="tabpanel" aria-labelledby="projet-{{ projet.id }}-tab">#}
+{#                        <div class="card-body">#}
+{#                            <h3>{{ projet.offre.libelle }}</h3>#}
+{#                            <div class="d-inline-flex gap-1">#}
+{#                                <em>{{ projet.offre.descriptionCourte|raw }}</em>#}
+{#                                <em class="link-primary" data-bs-toggle="collapse"#}
+{#                                    data-bs-target="#collapseExample" aria-expanded="false"#}
+{#                                    aria-controls="collapseExample">#}
+{#                                    En savoir plus#}
+{#                                </em>#}
+{#                            </div>#}
+{#                            <div class="collapse" id="collapseExample">#}
+{#                                <div class="card card-body">#}
+{#                                    {{ projet.offre.descriptionLongue|raw }}#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <hr>#}
+{#                            {% if projet.etat == false %}#}
+
+{#                                <h4>Conditions du contrat</h4>#}
+{#                                <ul class="data-list flex flex-row justify-content-around">#}
+{#                                    <li>#}
+{#                                        <span>Montant total du projet :</span> {{ projet.prix|format_currency('EUR', locale='fr') }}#}
+{#                                    </li>#}
+{#                                    {% set accompte = projet.prix * (projet.offre.accompte / 100) %}#}
+{#                                    <li>#}
+{#                                        <span>Montant de l'accompte :</span> {{ accompte|format_currency('EUR', locale='fr') }}#}
+{#                                    </li>#}
+{#                                    {% set livraison = game.periode + projet.offre.deadline %}#}
+{#                                    <li><span>Livraison :</span>#}
+{#                                        {% if livraison == 1 %}#}
+{#                                            janvier#}
+{#                                        {% elseif livraison == 2 %}#}
+{#                                            février#}
+{#                                        {% elseif livraison == 3 %}#}
+{#                                            mars#}
+{#                                        {% elseif livraison == 4 %}#}
+{#                                            avril#}
+{#                                        {% elseif livraison == 5 %}#}
+{#                                            mai#}
+{#                                        {% elseif livraison == 6 %}#}
+{#                                            juin#}
+{#                                        {% elseif livraison == 7 %}#}
+{#                                            juillet#}
+{#                                        {% elseif livraison == 8 %}#}
+{#                                            août#}
+{#                                        {% elseif livraison == 9 %}#}
+{#                                            septembre#}
+{#                                        {% elseif livraison == 10 %}#}
+{#                                            octobre#}
+{#                                        {% elseif livraison == 11 %}#}
+{#                                            novembre#}
+{#                                        {% elseif livraison == 12 %}#}
+{#                                            décembre#}
+{#                                        {% endif %}#}
+{#                                    </li>#}
+{#                                </ul>#}
+{#                                <h4>Ressources humaines nécessaires</h4>#}
+{#                                <ul class="data-list flex flex-row justify-content-around">#}
+{#                                    {% for besoinRole in projet.offre.besoinRole %}#}
+{#                                        <li>{{ besoinRole.role.libelle }} : {{ besoinRole.nbJours }} jours</li>#}
+{#                                    {% endfor %}#}
+{#                                </ul>#}
+
+{#                                <h4>Affectations des ressources humaines au projet</h4>#}
+{#                                <turbo-frame id="projet-frame-{{ projet.id }}">#}
+{#                                    {% if projetForms is defined and projetForms is not null %}#}
+{#                                        {{ form_start(projetForms[projet.id], {'method': 'POST', 'action': path('app_projet_update', {'id':projet.id})}) }}#}
+{#                                        {{ form_row(projetForms[projet.id].assigneRoles) }}#}
+{#                                        <button class="btn btn-primary#}
+{#                                                                {% if game.pause == true %}#}
+{#                                                                disabled#}
+{#                                                                {% endif %}"#}
+{#                                                {% if game.pause == true %}disabled{% endif %}#}
+{#                                                type="submit">Affecter#}
+{#                                        </button>#}
+{#                                        {{ form_end(projetForms[projet.id]) }}#}
+{#                                    {% endif %}#}
+{#                                </turbo-frame>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#            </div>#}
+
+{#            <hr>#}
+
+{#            <h3>Gestion du personnel</h3>#}
+
+{#            <div class="row justify-content-start g-4">#}
+{#                {% for profil in profils %}#}
+{#                    <div class="col-lg-6">#}
+{#                        <div class="card h-100">#}
+{#                            <div class="card-header h-100">#}
+{#                                {{ profil.type }}#}
+{#                            </div>#}
+{#                            <div class="card-body">#}
+{#                                <h4>{{ profil.prenom }} {{ profil.nom }}</h4>#}
+{#                                <em>{{ profil.role.libelle }}</em>#}
+{#                                <hr>#}
+{#                                <h5>Niveau de compétences</h5>#}
+{#                                <div class="progress">#}
+{#                                    <div class="progress-bar" role="progressbar"#}
+{#                                         style="width: {{ profil.niveauCompetences * 10 }}%"#}
+{#                                         aria-valuenow="{{ profil.niveauCompetences * 10 }}" aria-valuemin="0"#}
+{#                                         aria-valuemax="100"></div>#}
+{#                                </div>#}
+{#                                <ul class="data-list flex flex-row justify-content-between flex-wrap">#}
+{#                                    <li>#}
+{#                                        <span>Nombre de jours travaillés : </span> {{ profil.role.nbJoursTravailles }}#}
+{#                                    </li>#}
+{#                                    <li>#}
+{#                                        <span>Tâches recurrentes : </span> {{ profil.tacheRecurrente }}#}
+{#                                    </li>#}
+{#                                    <li>#}
+{#                                        <span>Temps de mission : </span>#}
+{#                                        {% if profil.type == 'freelance' %}#}
+{#                                            {{ profil.tempsMission }} mois#}
+{#                                        {% else %}#}
+{#                                            ∞ mois#}
+{#                                        {% endif %}#}
+{#                                    </li>#}
+{#                                    <li>#}
+{#                                        <span>Salaire : </span> {{ profil.salaire|format_currency('EUR', locale='fr') }}#}
+{#                                        {% if profil.type == "salarie" %}#}
+{#                                            / mois#}
+{#                                        {% else %}#}
+{#                                            / jour#}
+{#                                        {% endif %}#}
+{#                                    </li>#}
+{#                                </ul>#}
+
+{#                            </div>#}
+{#                            <div class="card-footer">#}
+{#                                <button class="btn btn-primary">#}
+{#                                    Recruter#}
+{#                                </button>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#            </div>#}
 
             <div class="pause" style="border: solid 10px {{ equipe.couleur }}">
                 {% if game.pause == true %}

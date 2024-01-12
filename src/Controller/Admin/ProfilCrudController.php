@@ -76,4 +76,32 @@ class ProfilCrudController extends AbstractCrudController
 
         parent::updateEntity($entityManager, $entityInstance);
     }
+
+    public function createEntity(string $entityFqcn)
+{
+    return new $entityFqcn;
+}
+
+    public function prePersist(EntityManagerInterface $entityManager, $entityInstance): void
+{
+    if ($entityInstance instanceof Profil) {
+        $role = $entityInstance->getRole();
+        $niveauCompetences = $entityInstance->getNiveauCompetences();
+
+        if ($entityInstance->getType() === 'freelance') {
+            $salaire = $role->getSalaireFreelance() * (1 + (($niveauCompetences - 5) / 10));
+        } else {
+            $salaire = $role->getSalaireSalarie() * (1 + (($niveauCompetences - 5) / 10));
+        }
+
+        if ($niveauCompetences > 5) {
+            $entityInstance->setTacheRecurrente($role->getTacheRecurrente() - ($niveauCompetences - 5));
+        } else {
+            $entityInstance->setTacheRecurrente($role->getTacheRecurrente());
+        }
+
+        $entityInstance->setSalaire($salaire);
+    }
+}
+
 }

@@ -9,6 +9,7 @@ use App\Form\ProjetType;
 use App\Form\PropositionType;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
+use App\Repository\ProfilRepository;
 use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,7 @@ class JoueurGameController extends AbstractController
         private OffreRepository         $offreRepository,
         private GameRepository          $gameRepository,
         private ProjetRepository        $projetRepository,
+        private ProfilRepository        $profilRepository,
         private readonly RequestStack   $session,
     )
     {
@@ -73,11 +75,15 @@ class JoueurGameController extends AbstractController
             $this->joueurPhase2AController->index($game);
         }
 
+        $profils = $this->profilRepository->findBy(['equipe' => null]);
+
+
         return $this->render('joueur_game/index.html.twig', [
             'game' => $game,
             'offres' => $offres ?? null,
             'forms' => $forms ?? null,
             'projetForms' => $projetForms ?? null,
+            'profils' => $profils ?? null,
         ]);
     }
 }

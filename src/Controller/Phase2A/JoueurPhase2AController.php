@@ -8,6 +8,7 @@ use App\Entity\Projet;
 use App\Form\AssigneRoleType;
 use App\Form\ProjetType;
 use App\Repository\AssigneRoleRepository;
+use App\Repository\ProfilRepository;
 use App\Repository\ProjetRepository;
 use App\Repository\PropositionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,7 @@ class JoueurPhase2AController extends AbstractController
         private PropositionRepository $propositionRepository,
         private ProjetRepository      $projetRepository,
         private AssigneRoleRepository $assigneRoleRepository,
+        private ProfilRepository      $profilRepository,
     )
     {
     }
@@ -88,12 +90,15 @@ class JoueurPhase2AController extends AbstractController
                 }
             }
 
+            $profils = $this->profilRepository->findBy(['equipe' => null]);
+
             $this->hub->publish(new Update(
                 'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
                 $this->renderView('phase2a/joueur_phase2a.stream.html.twig', [
                     'game' => $game,
                     'equipe' => $equipe,
                     'projetForms' => $projetForms ?? null,
+                    'profils' => $profils ?? null,
                 ]),
                 false
             ));

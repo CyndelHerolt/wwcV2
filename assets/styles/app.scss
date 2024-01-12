@@ -8,25 +8,33 @@ body {
   color: #414141;
 
   section {
-    padding: 50px 75px !important;
+    padding: 175px 75px !important;
   }
 
-  .menu {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 50px;
-    color: white;
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
 
-    ul {
+    .menu {
       display: flex;
-      list-style: none;
-      background-color: white;
-      padding: 0;
-      margin: 0;
+      justify-content: space-between;
+      padding: 15px 50px;
+      color: white;
 
-      li {
-        margin: 3px;
-        padding: 5px 10px;
+      ul {
+        display: flex;
+        list-style: none;
+        background-color: white;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin: 3px;
+          padding: 5px 10px;
+        }
       }
     }
   }
