@@ -25,7 +25,7 @@ class Profil
     private ?int $niveauCompetences = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: '0')]
-    private ?string $salaire = null;
+    private ?string $salaire = "0";
 
     #[ORM\Column]
     private ?int $tempsMission = null;
@@ -40,7 +40,7 @@ class Profil
     private ?Role $role = null;
 
     #[ORM\Column]
-    private ?int $tacheRecurrente = null;
+    private ?int $tacheRecurrente = 0;
 
     #[ORM\ManyToOne(inversedBy: 'profils')]
     private ?Equipe $equipe = null;

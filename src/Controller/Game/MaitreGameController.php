@@ -13,6 +13,7 @@ use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
 use App\Repository\GameRepository;
 use App\Repository\OffreRepository;
+use App\Repository\ProfilRepository;
 use App\Repository\ProjetRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -38,6 +39,7 @@ class MaitreGameController extends AbstractController
         private GameRepository          $gameRepository,
         private EquipeRepository        $equipeRepository,
         private ProjetRepository        $projetRepository,
+        private ProfilRepository        $profilRepository,
         private HubInterface            $hub,
         private readonly RequestStack   $session,
     )
@@ -176,6 +178,8 @@ class MaitreGameController extends AbstractController
                 }
             }
 
+            $profils = $this->profilRepository->findBy(['equipe' => null]);
+
             $this->hub->publish(new Update(
                 'game-joueur/' . $game->getId() . '/equipe/' . $equipe->getId(),
                 $this->renderView('phase' . $phase . '/joueur_phase' . $phase . '.stream.html.twig', [
@@ -185,6 +189,7 @@ class MaitreGameController extends AbstractController
                     'forms' => $forms,
                     'offreUpdated' => $offreUpdated,
                     'projetForms' => $projetForms,
+                    'profils' => $profils,
                 ]),
                 false
             ));

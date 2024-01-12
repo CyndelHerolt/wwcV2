@@ -18,7 +18,6 @@ class ProjetController extends AbstractController
     public function __construct(
         private ProjetRepository      $projetRepository,
         private PropositionRepository $propositionRepository,
-        private AssigneRoleRepository $assigneRoleRepository,
     )
     {
     }
