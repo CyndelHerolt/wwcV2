@@ -164,6 +164,9 @@ class Equipe
     #[ORM\OneToMany(mappedBy: 'equipe', targetEntity: Profil::class)]
     private Collection $profils;
 
+    #[ORM\ManyToOne(inversedBy: 'equipe')]
+    private ?Surface $surface = null;
+
     public function __construct()
     {
         $this->personnels = new ArrayCollection();
@@ -889,6 +892,18 @@ class Equipe
                 $profil->setEquipe(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSurface(): ?Surface
+    {
+        return $this->surface;
+    }
+
+    public function setSurface(?Surface $surface): static
+    {
+        $this->surface = $surface;
 
         return $this;
     }

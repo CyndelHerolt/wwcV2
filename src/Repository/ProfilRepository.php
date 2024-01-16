@@ -21,6 +21,12 @@ class ProfilRepository extends ServiceEntityRepository
         parent::__construct($registry, Profil::class);
     }
 
+    public function save(Profil $profil): void
+    {
+        $this->_em->persist($profil);
+        $this->_em->flush();
+    }
+
 //    /**
 //     * @return Profil[] Returns an array of Profil objects
 //     */

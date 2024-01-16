@@ -7,6 +7,7 @@ use App\Entity\Game;
 use App\Entity\Offre;
 use App\Entity\Profil;
 use App\Entity\Role;
+use App\Entity\Surface;
 use App\Entity\TypeOffre;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -59,5 +60,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Equipes', 'fas fa-users', Equipe::class);
         yield MenuItem::linkToCrud('Role', 'fas fa-users', Role::class);
         yield MenuItem::linkToCrud('Profil', 'fas fa-users', Profil::class);
+        yield MenuItem::linkToCrud('Surface', 'fas fa-building', Surface::class);
     }
 }

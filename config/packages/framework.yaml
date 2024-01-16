@@ -24,3 +24,4 @@ when@test:
         test: true
         session:
             storage_factory_id: session.storage.factory.mock_file
+            cookie_lifetime: 86400 # 1 day in seconds

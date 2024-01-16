@@ -7,7 +7,7 @@ use App\Repository\GameRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_MAITRE')]
@@ -15,12 +15,9 @@ class GameChoiceController extends AbstractController
 {
     public function __construct(
         protected GameRepository $gameRepository,
-        private DataUserSession $dataUserSession,
         private readonly RequestStack $session,
     )
     {
-        $this->gameRepository = $gameRepository;
-        $this->dataUserSession = $dataUserSession;
     }
 
     #[Route('/game/choice', name: 'app_game_choice')]
