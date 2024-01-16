@@ -230,7 +230,7 @@
     </div>
 </div>
 <!-- Modal salaries -->
-<div class="modal fade modal-lg" id="salariesModal" tabindex="-1" aria-labelledby="salariesModalLabel"
+<div class="modal fade modal-xl" id="salariesModal" tabindex="-1" aria-labelledby="salariesModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -239,7 +239,175 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ...
+                <h5>Vue d'ensemble</h5>
+                <table class="table table-striped">
+                    <tr>
+                        <td>
+                            <span class="fw-bolder">Total d'employés : </span>{{ equipe.profils|length }}
+                        </td>
+                    </tr>
+                    {% for role in game.roles %}
+                        <tr>
+                            <td>
+                                <span class="fw-bolder">{{ role.libelle }} : </span> {{ equipe.profils|filter(e => e.role.id == role.id)|length }}
+                                <br>
+                                <small class="text-muted">
+                                    Total de jours de travail disponibles pour un mois :
+                                    {% set totalJours = equipe.profils|filter(e => e.role.id == role.id)|reduce((carry, profil) => carry + profil.nbJours, 0) %}
+                                    {{ totalJours }} jours
+                                </small>
+                                <br>
+                                <small class="text-muted">
+                                    Tâches récurrentes :
+                                    {{ role.tacheRecurrente }} jours
+                                </small>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <div class="alert alert-warning">
+                    <i class="fa-solid fa-warning"></i> &nbsp;
+                    <span>N'oubliez pas que chaque role mobilise des jours de travail afin de mener à bien les tâches récurrentes.</span>
+                </div>
+
+                <h5>Frais liés au personnel</h5>
+
+                <table class="table table-striped">
+                    <tr>
+                        <td><span class="fw-bolder">Salaires :</span>
+                            <ul class="data-list">
+                                {% for profil in equipe.profils %}
+                                    <li>
+                                        <small>
+                                        {{ profil.prenom }} {{ profil.nom }} : {{ profil.salaire|format_currency('EUR', locale='fr') }}
+                                        {% if profil.type == "salarie" %}
+                                            / mois
+                                        {% else %}
+                                            / jour
+                                        {% endif %}
+                                        </small>
+                                    </li>
+                                {% endfor %}
+                                <li>
+                                    <small class="fw-bolder">
+                                        Total : {{ equipe.profils|reduce((carry, profil) => carry + profil.salaire, 0)|format_currency('EUR', locale='fr') }}
+                                        / mois
+                                    </small>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Bureaux :</span> {{ equipe.surface.libelle }}
+                            | {{ equipe.surface.tarif|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                                Peut accueillir entre {{ equipe.surface.capaciteMin }}
+                                et {{ equipe.surface.capaciteMax }} employés
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Matériel :</span> {{ equipe.materiel }} machines
+                            | {{ equipe.materielActif|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                                {{ equipe.materiel - equipe.materielLoue }} machines
+                                possédées, {{ equipe.materielLoue }}
+                                machines louées
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Electricité :</span> {{ (equipe.profils|length * 25)|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                                25*nb salariés / mois
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Téléphonie :</span> {{ (equipe.profils|length * 50)|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                                50*nb salariés / mois
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Déplacements :</span> {{ (equipe.profils|length * 200)|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                            200*nb salariés / mois
+                            </small>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><span class="fw-bolder">Charges diverses</span> : {{ (equipe.profils|length * 50)|format_currency('EUR', locale='fr') }} / mois
+                            <br>
+                            <small class="text-muted">
+                                50*nb salariés / mois
+                            </small>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <div class="row justify-content-start g-4">
+                    <h5>Votre équipe</h5>
+                    {% for profil in equipe.profils %}
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header h-100">
+                                    {{ profil.type }}
+                                </div>
+                                <div class="card-body">
+                                    <h4>{{ profil.prenom }} {{ profil.nom }}</h4>
+                                    <em>{{ profil.role.libelle }}</em>
+                                    <hr>
+                                    <h5>Niveau de compétences</h5>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"
+                                             style="width: {{ profil.niveauCompetences * 10 }}%"
+                                             aria-valuenow="{{ profil.niveauCompetences * 10 }}"
+                                             aria-valuemin="0"
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                    <hr>
+                                    <ul class="data-list">
+                                        <li>
+                                            <span class="fw-bolder">Nombre de jours travaillés : </span> {{ profil.nbJours }}
+                                            jours
+                                        </li>
+                                        <li>
+                                            <span class="fw-bolder">Temps de mission : </span>
+                                            {% if profil.type == 'freelance' %}
+                                                {{ profil.tempsMission }} mois
+                                            {% else %}
+                                                ∞ mois
+                                            {% endif %}
+                                        </li>
+                                        <li>
+                                            <span class="fw-bolder">Salaire : </span> {{ profil.salaire|format_currency('EUR', locale='fr') }}
+                                            {% if profil.type == "salarie" %}
+                                                / mois
+                                            {% else %}
+                                                / jour
+                                            {% endif %}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
             <div class="modal-footer">
 

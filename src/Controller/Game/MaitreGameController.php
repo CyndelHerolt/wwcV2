@@ -49,36 +49,41 @@ class MaitreGameController extends AbstractController
     #[Route('/', name: 'app_maitre_game')]
     public function index(): Response
     {
-        $gameId = $this->dataUserSession->getGame()->getId();
-        $game = $this->gameRepository->find($gameId);
+        if ($this->dataUserSession->getGame() !== null) {
+            $gameId = $this->dataUserSession->getGame()->getId();
+            $game = $this->gameRepository->find($gameId);
 
-        $maitre = $this->getUser();
+            $maitre = $this->getUser();
 
-        if ($game === null) {
+            if ($game === null) {
+                $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
+                return $this->redirectToRoute('app_game_choice');
+            }
+
+            if ($game->getPhase() === "1a") {
+                $offres = $this->offreRepository->findBy(['game' => $game]);
+                $this->maitrePhase1AController->maitre_phase($game, $offres);
+            } elseif ($game->getPhase() === "1b") {
+                $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
+                $equipes = $this->equipeRepository->findBy(['game' => $game]);
+                if ($this->session->getSession()->get('offre') !== null) {
+                    $offreUpdated = $this->session->getSession()->get('offre');
+                } else {
+                    $offreUpdated = null;
+                }
+                $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
+            }
+
+            return $this->render('maitre_game/index.html.twig', [
+                'game' => $game,
+                'offres' => $offres ?? null,
+                'equipes' => $equipes ?? null,
+                'maitre' => $maitre ?? null,
+            ]);
+        } else {
             $this->addFlash('error', 'Vous n\'avez pas de partie en cours');
             return $this->redirectToRoute('app_game_choice');
         }
-
-        if ($game->getPhase() === "1a") {
-            $offres = $this->offreRepository->findBy(['game' => $game]);
-            $this->maitrePhase1AController->maitre_phase($game, $offres);
-        } elseif ($game->getPhase() === "1b") {
-            $offres = $this->offreRepository->findBy(['game' => $game, 'visible' => true]);
-            $equipes = $this->equipeRepository->findBy(['game' => $game]);
-            if ($this->session->getSession()->get('offre') !== null) {
-                $offreUpdated = $this->session->getSession()->get('offre');
-            } else {
-                $offreUpdated = null;
-            }
-            $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
-        }
-
-        return $this->render('maitre_game/index.html.twig', [
-            'game' => $game,
-            'offres' => $offres ?? null,
-            'equipes' => $equipes ?? null,
-            'maitre' => $maitre ?? null,
-        ]);
     }
 
     #[Route('/next/{id}', name: 'app_maitre_game_next_phase')]

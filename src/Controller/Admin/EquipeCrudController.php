@@ -51,6 +51,11 @@ class EquipeCrudController extends AbstractCrudController
                 ->setCrudController(GameCrudController::class)
                 ->setFormTypeOption('by_reference', true)
                 ->setFormTypeOption('multiple', false),
+            AssociationField::new('surface')
+                ->autocomplete()
+                ->setCrudController(SurfaceCrudController::class)
+                ->setFormTypeOption('by_reference', true)
+                ->setFormTypeOption('multiple', false),
             IntegerField::new('reputation')
                 ->setFormType(RangeType::class)
                 ->setFormTypeOptions([

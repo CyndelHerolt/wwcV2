@@ -48,6 +48,9 @@ class Profil
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'profils')]
     private Collection $game;
 
+    #[ORM\Column]
+    private ?int $nbJours = 0;
+
     public function __construct()
     {
         $this->game = new ArrayCollection();
@@ -186,6 +189,18 @@ class Profil
     public function removeGame(Game $game): static
     {
         $this->game->removeElement($game);
+
+        return $this;
+    }
+
+    public function getNbJours(): ?int
+    {
+        return $this->nbJours;
+    }
+
+    public function setNbJours(int $nbJours): static
+    {
+        $this->nbJours = $nbJours;
 
         return $this;
     }

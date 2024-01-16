@@ -107,6 +107,9 @@ class Game
     #[ORM\ManyToMany(targetEntity: Role::class, mappedBy: 'game', cascade: ["persist"])]
     private Collection $roles;
 
+    #[ORM\ManyToMany(targetEntity: Surface::class, mappedBy: 'game', cascade: ["persist"])]
+    private Collection $surfaces;
+
     public function __construct()
     {
         $this->offres = new ArrayCollection();
@@ -115,6 +118,7 @@ class Game
         $this->equipes = new ArrayCollection();
         $this->profils = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->surfaces = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -581,6 +585,33 @@ class Game
     {
         if ($this->roles->removeElement($role)) {
             $role->removeGame($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Surface>
+     */
+    public function getSurfaces(): Collection
+    {
+        return $this->surfaces;
+    }
+
+    public function addSurface(Surface $surface): static
+    {
+        if (!$this->surfaces->contains($surface)) {
+            $this->surfaces->add($surface);
+            $surface->addGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSurface(Surface $surface): static
+    {
+        if ($this->surfaces->removeElement($surface)) {
+            $surface->removeGame($this);
         }
 
         return $this;
