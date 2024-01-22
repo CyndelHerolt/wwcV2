@@ -15,12 +15,10 @@ class SurfaceController extends AbstractController
     {
     }
 
-    #[Route('/surface/change', name: 'app_surface_change', methods: ['POST'])]
-    public function change(): Response
+    #[Route('/surface/{id}/change', name: 'app_surface_change')]
+    public function change(?int $id): Response
     {
-    // récupérer la donnée soumise dans le formulaire
-    $surfaceId = $_POST['surface'];
-    $surface = $this->surfaceRepository->find($surfaceId);
+    $surface = $this->surfaceRepository->find($id);
 
     $surface->addEquipe($this->getUser()->getEquipe());
     $this->surfaceRepository->save($surface);

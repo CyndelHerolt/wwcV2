@@ -367,12 +367,15 @@
                                 {#                                    <button class="btn btn-primary" type="submit">Déménager</button> #}
                                 {#                                </form> #}
 
-                                <div class="row">
-                                    {% for surface in game.surfaces %}
-                                        <div class="col-4">
+                                <div class="row g-2">
+                                    {% for surface in game.surfaces|filter(e => e == equipe.surface) %}
+                                        <div class="col-12">
+                                            <h4>Surface possédée</h4>
                                             <div class="card">
                                                 <div class="card-header">
-                                                    {{ surface.libelle }}
+                                                    <h5 class="card-title">
+                                                        {{ surface.libelle }}
+                                                    </h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <ul class="data-list">
@@ -383,21 +386,66 @@
                                                         </li>
                                                         <li>
                                                             <span class="fw-bolder">Tarif : </span>
-                                                            {{ surface.tarif|format_currency('EUR', locale='fr') }} /
+                                                            {{ surface.tarif|format_currency('EUR', locale='fr') }}
+                                                            /
                                                             mois
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <div class="card-footer">
-                                                    <a href="{{ path('app_surface_change', {'id':surface.id}) }}">
-                                                        <button class="btn btn-primary">
-                                                            Déménager
-                                                        </button>
-                                                    </a>
-                                                </div>
                                             </div>
                                         </div>
                                     {% endfor %}
+
+                                        <div class="col-12">
+                                            <h4>Surfaces disponibles</h4>
+                                        </div>
+                                    {% for surface in game.surfaces|filter(e => e != equipe.surface) %}
+                                    <div class="col-4">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                {{ surface.libelle }}
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="data-list">
+                                                    <li>
+                                                        <span class="fw-bolder">Capacité d'accueil : </span>
+                                                        {{ surface.capaciteMin }} à {{ surface.capaciteMax }}
+                                                        personnes
+                                                    </li>
+                                                    <li>
+                                                        <span class="fw-bolder">Tarif : </span>
+                                                        {{ surface.tarif|format_currency('EUR', locale='fr') }}
+                                                        /
+                                                        mois
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="card-footer">
+                                                <a href="{{ path('app_surface_change', {'id':surface.id}) }}">
+                                                    <button class="btn btn-primary">
+                                                        Déménager
+                                                    </button>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                <hr>
+
+                                <div class="row">
+                                    <h4>Matériel</h4>
+                                    <form action="{{ path('app_materiel_add') }}" method="POST">
+                                        <label for="materiel">Machines</label>
+                                        <input type="number" name="materiel" id="materiel" class="form-control">
+                                        <small class="help-text">
+                                            {{ game.locationMateriel|format_currency('EUR', locale='fr') }} / machines.
+                                            Vous possédez actuellement {{ equipe.materiel }} machines dont {{ equipe.materielLoue }} louées.
+                                        </small>
+                                        <br>
+                                        <button class="btn btn-primary" type="submit">Louer</button>
+                                    </form>
                                 </div>
 
                             </turbo-frame>

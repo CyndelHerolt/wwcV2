@@ -21,6 +21,12 @@ class EquipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Equipe::class);
     }
 
+    public function save(Equipe $equipe): void
+    {
+        $this->_em->persist($equipe);
+        $this->_em->flush();
+    }
+
     public function findByUser($user): ?Equipe
     {
 //        récupérer l'equipe qui contient user dans ses users
