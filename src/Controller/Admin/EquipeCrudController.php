@@ -3,6 +3,9 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Equipe;
+use App\Entity\Profil;
+use App\Repository\ProfilRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -17,9 +20,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\RangeType;
+use function PHPUnit\Framework\isEmpty;
 
 class EquipeCrudController extends AbstractCrudController
 {
+
+    public function __construct(
+        private ProfilRepository $profilRepository,
+    )
+    {
+
+    }
 
 //    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
 //    {
@@ -66,5 +77,37 @@ class EquipeCrudController extends AbstractCrudController
                 ]),
             ColorField::new('couleur'),
         ];
+    }
+
+    public function createEntity(string $entityFqcn)
+    {
+        return new $entityFqcn;
+    }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof Equipe) {
+            if ($entityInstance->getProfils()->isEmpty()) {
+                foreach ($entityInstance->getGame()->getRoles() as $role) {
+                    if ($role->isOptDebut() === true) {
+                        $profil = new Profil();
+                        $profil->setPrenom($entityInstance->getNom());
+                        $profil->setNom($role->getLibelle());
+                        $profil->setEquipe($entityInstance);
+                        $profil->setType('salarie');
+                        $profil->setNiveauCompetences(5);
+                        $profil->setSalaire($role->getSalaireSalarie());
+                        $profil->setNbJours($role->getNbJoursTravailles());
+                        $profil->setTacheRecurrente($role->getTacheRecurrente());
+                        $profil->setTempsMission(0);
+                        $profil->setRole($role);
+
+                        $this->profilRepository->save($profil);
+                    }
+                }
+            }
+        }
+
+        parent::updateEntity($entityManager, $entityInstance);
     }
 }

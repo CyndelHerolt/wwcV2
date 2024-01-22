@@ -51,6 +51,8 @@
                 {{ include('phase1a/maitre_phase1a.stream.html.twig') }}
             {% elseif game.phase == '1b' %}
                 {{ include('phase1b/maitre_phase1b.stream.html.twig') }}
+            {% elseif game.phase == '2a' %}
+                {{ include('phase2a/maitre_phase2a.stream.html.twig') }}
             {% endif %}
         </div>
     </section>

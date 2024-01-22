@@ -51,6 +51,9 @@ class Role
     #[ORM\ManyToMany(targetEntity: Game::class, inversedBy: 'roles', cascade: ["persist"])]
     private Collection $game;
 
+    #[ORM\Column]
+    private ?bool $opt_debut = null;
+
 
     public function __construct()
     {
@@ -302,6 +305,18 @@ class Role
     public function removeGame(Game $game): static
     {
         $this->game->removeElement($game);
+
+        return $this;
+    }
+
+    public function isOptDebut(): ?bool
+    {
+        return $this->opt_debut;
+    }
+
+    public function setOptDebut(bool $opt_debut): static
+    {
+        $this->opt_debut = $opt_debut;
 
         return $this;
     }

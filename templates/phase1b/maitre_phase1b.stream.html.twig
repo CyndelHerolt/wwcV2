@@ -99,15 +99,15 @@
                             </td>
                             {% for offre in offres %}
                                 {% for proposition in equipe.propositions %}
-                                        {% if proposition.offre.id == offre.id and proposition.etat == true %}
-                                            <td>
-                                                <span class="badge bg-success">Accepté</span>
-                                            </td>
-                                        {% elseif proposition.offre.id == offre.id and proposition.etat == false %}
-                                            <td>
-                                                <span class="badge bg-danger">Refusé</span>
-                                            </td>
-                                        {% endif %}
+                                    {% if proposition.offre.id == offre.id and proposition.etat == true %}
+                                        <td>
+                                            <span class="badge bg-success">Accepté</span>
+                                        </td>
+                                    {% elseif proposition.offre.id == offre.id and proposition.etat == false %}
+                                        <td>
+                                            <span class="badge bg-danger">Refusé</span>
+                                        </td>
+                                    {% endif %}
                                 {% endfor %}
                             {% endfor %}
                         </tr>

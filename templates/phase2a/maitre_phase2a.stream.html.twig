@@ -1,0 +1,110 @@
+<turbo-stream action="replace" target="phase">
+    <template>
+        <div id="phase" {{ turbo_stream_listen('game-maitre/'~maitre.id) }}>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                {% for equipe in equipes %}
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link
+                        {# {% if offreUpdated is defined and offreUpdated == offre %}active{% elseif offreUpdated is not defined and loop.first %}active{% endif %} #}
+                         {% if loop.first %}active{% endif %}"
+                           id="equipe-{{ equipe.id }}-tab"
+                           data-bs-toggle="tab" href="#equipe-{{ equipe.id }}" role="tab"
+                           aria-controls="equipe-{{ equipe.id }}"
+                           aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ equipe.nom }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content" id="myTabContent">
+                {% for equipe in equipes %}
+                    <div class="card tab-pane fade
+                {#                    {% if equipeUpdated is defined and equipeUpdated == equipe %}show active{% elseif equipeUpdated is not defined and loop.first %}show active{% endif %} #}
+                {% if loop.first %}show active{% endif %}"
+                         id="equipe-{{ equipe.id }}"
+                         role="tabpanel" aria-labelledby="equipe-{{ equipe.id }}-tab">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Projet
+                                    </th>
+                                    {% for role in game.roles %}
+                                        <th>
+                                            {{ role.libelle }}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <small class="text-muted">
+                                            Tâches récurrentes
+                                        </small>
+                                    </td>
+                                    {% for role in game.roles %}
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ role.tacheRecurrente }} jr(s)
+                                            </small>
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+
+                                {% for projet in equipe.projets %}
+                                    <tr>
+                                        <th>
+                                            {{ projet.offre.libelle }} <br>
+                                            <small class="text-muted">
+                                                échéance :
+                                                {% if projet.fin == 1 %}
+                                                    janvier
+                                                {% elseif projet.fin == 2 %}
+                                                    février
+                                                {% elseif projet.fin == 3 %}
+                                                    mars
+                                                {% elseif projet.fin == 4 %}
+                                                    avril
+                                                    {% elseif projet.fin == 5 %}
+                                                    mai
+                                                {% elseif projet.fin == 6 %}
+                                                    juin
+                                                {% elseif projet.fin == 7 %}
+                                                    juillet
+                                                {% endif %}
+                                            </small>
+                                        </th>
+                                        {% for assigneRole in projet.assigneRoles %}
+                                            <td>
+                                                {{ assigneRole.nbJoursPrevi }} jours saisis
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ assigneRole.nbJours }} jours restants sur
+                                                    {% for besoinRole in projet.offre.besoinRole %}
+                                                        {% if besoinRole.role == assigneRole.role %}
+                                                            {{ besoinRole.nbJours }}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </small>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <th>
+                                        Capacité
+                                    </th>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </template>
+</turbo-stream>

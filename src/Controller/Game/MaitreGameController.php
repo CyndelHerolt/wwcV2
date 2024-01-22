@@ -8,6 +8,7 @@ use App\Controller\Phase1A\MaitrePhase1AController;
 use App\Controller\Phase1B\JoueurPhase1BController;
 use App\Controller\Phase1B\MaitrePhase1BController;
 use App\Controller\Phase2A\JoueurPhase2AController;
+use App\Controller\Phase2A\MaitrePhase2AController;
 use App\Form\ProjetType;
 use App\Form\PropositionType;
 use App\Repository\EquipeRepository;
@@ -31,6 +32,7 @@ class MaitreGameController extends AbstractController
         private DataUserSession         $dataUserSession,
         private MaitrePhase1AController $maitrePhase1AController,
         private MaitrePhase1BController $maitrePhase1BController,
+        private MaitrePhase2AController $maitrePhase2AController,
         private JoueurGameController    $joueurGameController,
         private JoueurPhase1AController $joueurPhase1AController,
         private JoueurPhase1BController $joueurPhase1BController,
@@ -72,6 +74,9 @@ class MaitreGameController extends AbstractController
                     $offreUpdated = null;
                 }
                 $this->maitrePhase1BController->index($game, $offres, $equipes, $offreUpdated);
+            } elseif ($game->getPhase() === "2a") {
+                $equipes = $this->equipeRepository->findBy(['game' => $game]);
+                $this->maitrePhase2AController->index($game, $equipes);
             }
 
             return $this->render('maitre_game/index.html.twig', [
